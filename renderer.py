@@ -55,7 +55,7 @@ class Renderer:
         self.status_board.render_console()
 
         self.hud_board.console.blit(root_console, 0, 0, 0, 0, HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT)
-        self.status_board.console.blit(root_console, int((SCREEN_WIDTH * 2) / 3), SCREEN_HEIGHT - STATUS_BOARD_HEIGHT, 0, 0, STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT)
+        self.status_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, SCREEN_HEIGHT - STATUS_BOARD_HEIGHT, 0, 0, STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT)
         self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
         
         # Blit the console

@@ -47,7 +47,7 @@ def main():
     root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'civs baby', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
 
     # Create the player
-    player = Entity(int(SCREEN_WIDTH/2), int(SCREEN_HEIGHT/2), ord('@'), libtcodpy.white, [25, 65, 45])
+    player = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
     
     # Create our entity container
     entities = []
