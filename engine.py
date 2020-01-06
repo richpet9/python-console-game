@@ -4,8 +4,9 @@ import time
 
 from os import system, name
 from renderer import render_all
-from map.game_map import GameMap
 from input_handler import handle_keys 
+from map.game_map import GameMap
+from camera import Camera
 from entities.entity import Entity
 from entities.building import Building
 from workers.construction_worker import ConstructionWorker
@@ -51,8 +52,11 @@ def main():
     # Create our map
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
+    # Create the camera
+    camera = Camera(0, 0)
+
     # Create the game board
-    game_board = GameBoard(libtcodpy.console.Console(MAP_WIDTH, MAP_HEIGHT), MAP_WIDTH, MAP_HEIGHT, game_map)
+    game_board = GameBoard(libtcodpy.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT - (HUD_BOARD_HEIGHT + MESSAGE_BOARD_HEIGHT)), SCREEN_WIDTH, SCREEN_HEIGHT - (HUD_BOARD_HEIGHT + MESSAGE_BOARD_HEIGHT), game_map, camera)
 
     # Create the HUD board
     hud_board = HUDBoard(libtcodpy.console.Console(SCREEN_WIDTH, HUD_BOARD_HEIGHT), SCREEN_WIDTH, HUD_BOARD_HEIGHT)
@@ -87,7 +91,7 @@ def main():
         status_board.active_tile = active_tile
 
         # Render all the entities, the map, and the boards (maybe consolidate these)
-        render_all(root_console, player, entities, game_board, message_board, hud_board, status_board)
+        render_all(root_console, player, camera, entities, game_board, message_board, hud_board, status_board)
 
         # Update the console
         libtcodpy.console_flush()
@@ -103,13 +107,15 @@ def main():
             if(event.type == "KEYDOWN"):
                 # A key was pressed, forward info to input hanlder
                 end = handle_keys(event.sym).get("quit")
-                move = handle_keys(event.sym).get("move")
+                move_player = handle_keys(event.sym).get("move_player")
+                move_camera = handle_keys(event.sym).get("move_camera")
                 place = handle_keys(event.sym).get("place")
                 change_building = handle_keys(event.sym).get("change_building")
 
                 # Check input handler response and act accordingly
                 if(end): raise SystemExit()
-                if(move): player.move(move[0], move[1])
+                if(move_player): player.move(move_player[0], move_player[1])
+                if(move_camera): camera.move(move_camera[0], move_camera[1])
                 if(place): 
                     # TODO: The 0 in the below line is the UID of the building, this info will
                     #  be relayed from an interface handler

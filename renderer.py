@@ -8,7 +8,7 @@ MESSAGE_BOARD_WIDTH,
 STATUS_BOARD_HEIGHT, 
 STATUS_BOARD_WIDTH)
 
-def render_all(root_console, player, entities, game_board, message_board, hud_board, status_board):
+def render_all(root_console, player, camera, entities, game_board, message_board, hud_board, status_board):
     # Always render game board first (the background)
     game_board.render_console()
 
@@ -17,11 +17,11 @@ def render_all(root_console, player, entities, game_board, message_board, hud_bo
         if not entity.blink:
             # This right here is important. The entities are rendered on to the GAME BOARD's
             # console, not the root console
-            render_entity(game_board.console, entity)
+            render_entity(game_board.console, camera, entity)
 
     # Render the player
     if not player.blink:
-        render_entity(game_board.console, player)
+        render_entity(game_board.console, camera, player)
     
     # Render the text to the message board console
     message_board.render_console()
@@ -41,8 +41,8 @@ def render_all(root_console, player, entities, game_board, message_board, hud_bo
     # Blit the console
     root_console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-def render_entity(console, entity):
-    console.print(entity.x, entity.y, chr(entity.char), fg=entity.fg, bg=entity.bg)
+def render_entity(console, camera, entity):
+    console.print(entity.x + camera.x, entity.y + camera.y, chr(entity.char), fg=entity.fg, bg=entity.bg)
 
 def clear_entity(console, entity):
     console.print(entity.x, entity.y, ' ')

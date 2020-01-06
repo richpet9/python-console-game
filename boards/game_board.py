@@ -3,18 +3,19 @@ import tcod as libtcodpy
 from boards.board import Board
 
 class GameBoard(Board):
-    def __init__(self, console, console_width, console_height, game_map):
+    def __init__(self, console, console_width, console_height, game_map, camera):
         Board.__init__(self, console, console_width, console_height)
 
         self.game_map = game_map
+        self.camera = camera
 
     def render_console(self):
         # Clear the board
         self.console.clear(ord(' '))
         
         # Render the tiles in the map
-        for y in range(0, self.game_map.height):
-            for x in range(0, self.game_map.width):
+        for y in range(self.camera.y, self.game_map.height):
+            for x in range(self.camera.x, self.game_map.width):
                 self.render_tile(x, y)
 
     def render_tile(self, x, y):
