@@ -1,7 +1,7 @@
-FONT_BITMAP_FILE = "data/fonts/terminal10x10_gs_tc.png"
+FONT_BITMAP_FILE = "data/fonts/terminal16x16_gs_ro.png"
 
-SCREEN_WIDTH = 116
-SCREEN_HEIGHT = 75
+SCREEN_WIDTH = 70
+SCREEN_HEIGHT = 50
 HUD_BOARD_HEIGHT = 10
 
 MESSAGE_BOARD_WIDTH = int((SCREEN_WIDTH * 2) / 3)

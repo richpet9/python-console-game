@@ -34,7 +34,7 @@ def main():
     libtcodpy.sys_set_fps(15)
 
     # Set the font
-    libtcodpy.console_set_custom_font(FONT_BITMAP_FILE, libtcodpy.FONT_LAYOUT_TCOD | libtcodpy.FONT_TYPE_GRAYSCALE)
+    libtcodpy.console_set_custom_font(FONT_BITMAP_FILE, libtcodpy.FONT_LAYOUT_ASCII_INROW | libtcodpy.FONT_TYPE_GRAYSCALE)
 
     # Set some color controllers
     libtcodpy.console_set_color_control(libtcodpy.COLCTRL_1, libtcodpy.red, libtcodpy.black)
