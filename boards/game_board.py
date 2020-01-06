@@ -33,7 +33,7 @@ class GameBoard(Board):
 
         if(not tile.territory):
             # Basic Tree generation (so we can more easily see camera movement)
-            if(tile.tree):
+            if(tile.terrain == "trees"):
                 self.console.print(screenX, screenY, 'T', [125, 160, 120], [25, 60, 20])
             else:
                 # If the tile is not a building, or territory, or tree, render is as a green block (grass)
