@@ -3,7 +3,7 @@ import tcod.event
 import time
 
 from os import system, name
-from renderer import render_all
+from renderer import Renderer
 from input_handler import handle_keys 
 from map.game_map import GameMap
 from camera import Camera
@@ -70,6 +70,9 @@ def main():
     # Create the construction worker
     construction_worker = ConstructionWorker(game_map.tiles, entities)
 
+    # Create the renderer last
+    renderer = Renderer(player, camera, game_board, message_board, hud_board, status_board)
+
     while True:
         # Log FPS
         print("FPS: " + str(libtcodpy.sys_get_fps()))
@@ -84,14 +87,15 @@ def main():
             player.blink = not player.blink
             last_blink_time = current_time
 
-        # Update entity count
+        # Update entity count and rendered object count
         hud_board.entity_count = len(entities)
+        hud_board.rendered_objects = renderer.rendered_objects
 
         # Send active tile to the status board for stats
         status_board.active_tile = active_tile
 
         # Render all the entities, the map, and the boards (maybe consolidate these)
-        render_all(root_console, player, camera, entities, game_board, message_board, hud_board, status_board)
+        renderer.render_all(root_console, entities)
 
         # Update the console
         libtcodpy.console_flush()

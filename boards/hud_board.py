@@ -9,6 +9,7 @@ class HUDBoard(Board):
         Board.__init__(self, console, console_width, console_height)
 
         self.entity_count = -1
+        self.rendered_objects = -1
         self.buildings = read_in_buildings()
         self.active_building_index = 0
         self.active_building = self.buildings[0] if self.buildings[0] else None
@@ -19,12 +20,13 @@ class HUDBoard(Board):
 
         # Draw the messages
         self.console.print(1, 1, "Entities: " + str(self.entity_count))
+        self.console.print(1, 2, "Rendered Objects: " + str(self.rendered_objects))
         
         # Pre-create the cursor string since its a biggin
         cursor = chr(libtcodpy.COLCTRL_2) + 'x' + chr(libtcodpy.COLCTRL_STOP)
 
         for index, building in enumerate(self.buildings):
-            self.console.print(1, index + 2, '[' + (cursor if(index == self.active_building_index) else ' ') + ']' + building["name"])
+            self.console.print(1, index + 3, '[' + (cursor if(index == self.active_building_index) else ' ') + ']' + building["name"])
 
     def move_active_building(self, amount):
         self.active_building_index = clamp(self.active_building_index + amount, 0, len(self.buildings) - 1)

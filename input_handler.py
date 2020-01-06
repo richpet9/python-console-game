@@ -12,13 +12,13 @@ def handle_keys(key):
     if(key == libtcodpy.event.K_d):
         return {"move_player" : (1, 0)}
     if(key == libtcodpy.event.K_UP):
-        return {"move_camera" : (0, 10)}
-    if(key == libtcodpy.event.K_DOWN):
         return {"move_camera" : (0, -10)}
+    if(key == libtcodpy.event.K_DOWN):
+        return {"move_camera" : (0, 10)}
     if(key == libtcodpy.event.K_LEFT):
-        return {"move_camera" : (10, 0)}
-    if(key == libtcodpy.event.K_RIGHT):
         return {"move_camera" : (-10, 0)}
+    if(key == libtcodpy.event.K_RIGHT):
+        return {"move_camera" : (10, 0)}
     if(key == libtcodpy.event.K_x):
         return {"place" : "colony"}
     if(key == libtcodpy.event.K_i):
