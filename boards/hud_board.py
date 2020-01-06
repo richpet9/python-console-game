@@ -12,9 +12,6 @@ class HUDBoard(Board):
         self.buildings = read_in_buildings()
         self.active_building_index = 0
         self.active_building = self.buildings[0] if self.buildings[0] else None
-
-    def update_entity_count(self, entities):
-        self.entity_count = len(entities)
     
     def render_console(self):
         # Clear the console first

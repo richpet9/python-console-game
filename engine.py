@@ -81,7 +81,7 @@ def main():
             last_blink_time = current_time
 
         # Update entity count
-        hud_board.update_entity_count(entities)
+        hud_board.entity_count = len(entities)
 
         # Send active tile to the status board for stats
         status_board.active_tile = active_tile
