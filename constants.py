@@ -3,6 +3,17 @@ FONT_BITMAP_FILE = "data/fonts/terminal16x16_gs_ro.png"
 SCREEN_WIDTH = 70
 SCREEN_HEIGHT = 50
 
+# HOW ARE THESE BOARDS DISPLAYED?
+# --------------------
+# |      HUD         |
+# --------------------
+# |                  |
+# |   GAME BOARD     |
+# |                  |
+# --------------------
+# |    MSG   | STATS |
+# --------------------
+
 MAP_WIDTH = SCREEN_WIDTH * 3
 MAP_HEIGHT = SCREEN_HEIGHT * 3
 
