@@ -1,0 +1,17 @@
+[
+    {
+        "UID": 0,
+        "name": "Capitol Building",
+        "char": "X"
+    },
+    {
+        "UID": 1,
+        "name": "College",
+        "char": "C"
+    },
+    {
+        "UID": 2,
+        "name": "Workshop",
+        "char": "W"
+    }
+]
