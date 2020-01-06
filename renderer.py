@@ -2,11 +2,14 @@ import tcod as libtcodpy
 
 from constants import (SCREEN_WIDTH, 
 SCREEN_HEIGHT, 
+HUD_BOARD_WIDTH,
 HUD_BOARD_HEIGHT, 
 MESSAGE_BOARD_HEIGHT, 
 MESSAGE_BOARD_WIDTH, 
 STATUS_BOARD_HEIGHT, 
-STATUS_BOARD_WIDTH)
+STATUS_BOARD_WIDTH,
+GAME_BOARD_WIDTH,
+GAME_BOARD_HEIGHT)
 
 class Renderer:
     def __init__(self, player, camera, game_board, message_board, hud_board, status_board):
@@ -51,16 +54,16 @@ class Renderer:
         # Render the status board
         self.status_board.render_console()
 
-        self.hud_board.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, HUD_BOARD_HEIGHT)
+        self.hud_board.console.blit(root_console, 0, 0, 0, 0, HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT)
         self.status_board.console.blit(root_console, int((SCREEN_WIDTH * 2) / 3), SCREEN_HEIGHT - STATUS_BOARD_HEIGHT, 0, 0, STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT)
-        self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - (HUD_BOARD_HEIGHT + MESSAGE_BOARD_HEIGHT))
+        self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
         
         # Blit the console
         root_console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
     def entity_is_visible(self, entity):
-        return (entity.x >= self.camera.x) and (entity.x <= self.camera.x + SCREEN_WIDTH) and (entity.y >= self.camera.y) and (entity.y <= self.camera.y + SCREEN_HEIGHT)
+        return (entity.x >= self.camera.x) and (entity.x <= self.camera.x + GAME_BOARD_WIDTH) and (entity.y >= self.camera.y) and (entity.y <= self.camera.y + GAME_BOARD_HEIGHT)
 
     def render_entity(self, console, entity):
         console.print(entity.x - self.camera.x, entity.y - self.camera.y, chr(entity.char), fg=entity.fg, bg=entity.bg)

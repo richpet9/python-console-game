@@ -1,8 +1,7 @@
 import tcod as libtcodpy
-import random
 
 from boards.board import Board
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT
 
 class GameBoard(Board):
     def __init__(self, console, console_width, console_height, game_map, camera):
@@ -19,8 +18,8 @@ class GameBoard(Board):
         rendered_tiles = 0
 
         # Render the tiles in the map
-        for y in range(self.camera.y, SCREEN_HEIGHT + self.camera.y):
-            for x in range(self.camera.x, SCREEN_WIDTH + self.camera.x):
+        for y in range(self.camera.y, GAME_BOARD_HEIGHT + self.camera.y):
+            for x in range(self.camera.x, GAME_BOARD_WIDTH + self.camera.x):
                 self.render_tile(x, y)
                 rendered_tiles += 1
         

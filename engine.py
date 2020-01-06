@@ -17,13 +17,16 @@ from boards.status_board import StatusBoard
 from constants import (FONT_BITMAP_FILE,
 SCREEN_WIDTH,
 SCREEN_HEIGHT,
+MAP_WIDTH,
+MAP_HEIGHT,
+HUD_BOARD_WIDTH,
 HUD_BOARD_HEIGHT,
 MESSAGE_BOARD_WIDTH,
 MESSAGE_BOARD_HEIGHT,
 STATUS_BOARD_WIDTH,
 STATUS_BOARD_HEIGHT,
-MAP_WIDTH,
-MAP_HEIGHT,
+GAME_BOARD_WIDTH,
+GAME_BOARD_HEIGHT,
 BLINK_DELAY)
     
 def main():
@@ -56,10 +59,10 @@ def main():
     camera = Camera(0, 0)
 
     # Create the game board
-    game_board = GameBoard(libtcodpy.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT - (HUD_BOARD_HEIGHT + MESSAGE_BOARD_HEIGHT)), SCREEN_WIDTH, SCREEN_HEIGHT - (HUD_BOARD_HEIGHT + MESSAGE_BOARD_HEIGHT), game_map, camera)
+    game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, game_map, camera)
 
     # Create the HUD board
-    hud_board = HUDBoard(libtcodpy.console.Console(SCREEN_WIDTH, HUD_BOARD_HEIGHT), SCREEN_WIDTH, HUD_BOARD_HEIGHT)
+    hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT)
 
     # Create the message board
     message_board = MessageBoard(libtcodpy.console.Console(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT), MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
