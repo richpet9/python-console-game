@@ -2,17 +2,24 @@ import tcod as libtcodpy
 import json
 
 from entities.building import Building
+from util import with_col_code
 
 class ConstructionWorker():
-    def __init__(self, tiles, game_entities):
+    def __init__(self, tiles, game_entities, player):
         self.tiles = tiles
         self.game_entities = game_entities
+        self.player = player
         self.building_list = read_in_buildings()
 
     def construct_building(self, building, tile):
-        # TODO: Make these errors more descript
-        if(tile.building): return False
-        if(not building): return False
+        if(tile.building): return "Unable to place building, one already exists there."
+        if(not building): return "Error: building could not be located in buildings.json"
+        if(building["cost"] > self.player.funds): 
+            return "This building costs " + \
+                    with_col_code(3, str(building["cost"])) + \
+                    with_col_code(1, ", you have ") + \
+                    with_col_code(3, str(self.player.funds)) + \
+                    with_col_code(1, '.')
 
         new_building = Building(tile.x, tile.y, ord(building["char"]), bg=libtcodpy.dark_blue)
 

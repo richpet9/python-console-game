@@ -82,7 +82,7 @@ def main():
     status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT)
 
     # Create the construction worker
-    construction_worker = ConstructionWorker(game_map.tiles, entities)
+    construction_worker = ConstructionWorker(game_map.tiles, entities, player)
 
     # Create the turn action worker
     turn_action_worker = TurnActionWorker(game_map.tiles, entities, player)
@@ -145,12 +145,11 @@ def main():
                 if(move_player): cursor.move(move_player[0], move_player[1])
                 if(move_camera): camera.move(move_camera[0], move_camera[1])
                 if(place): 
-                    # TODO: The 0 in the below line is the UID of the building, this info will
-                    #  be relayed from an interface handler
-                    if(construction_worker.construct_building(hud_board.active_building, active_tile)):
-                        message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], cursor.x, cursor.y))
+                    worker_response = construction_worker.construct_building(hud_board.active_building, active_tile)
+                    if(worker_response is not True):
+                        message_board.push_important_message(worker_response)
                     else:
-                        message_board.push_important_message("A building is already located at [%d, %d]" % (cursor.x, cursor.y))
+                        message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], cursor.x, cursor.y))
                 if(change_building):
                     if(change_building == "down"):
                         hud_board.move_active_building(1)

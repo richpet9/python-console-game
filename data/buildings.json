@@ -7,7 +7,8 @@
         "energy_requirement": 0,
         "placed_actions": null,
         "turn_actions": {
-            "claim_land": true
+            "claim_land": 1,
+            "increment_funds": 1
         }
     },
     {
