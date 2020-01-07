@@ -5,8 +5,9 @@ import time
 from os import system, name
 from renderer import Renderer
 from input_handler import handle_keys 
-from map.game_map import GameMap
 from camera import Camera
+from player import Player
+from map.game_map import GameMap
 from entities.entity import Entity
 from entities.building import Building
 from workers.construction_worker import ConstructionWorker
@@ -46,8 +47,16 @@ def main():
     # Create the root console
     root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'civs baby', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
 
-    # Create the player
-    player = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
+    # Create the camera
+    camera = Camera(0, 0)
+
+    # -- The below occurs when we click play --
+
+    # Create the player's civilization
+    player = Player("Richie's civ", 0, libtcodpy.blue)
+
+    # Create the cursor
+    cursor = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
     
     # Create our entity container
     entities = []
@@ -55,14 +64,11 @@ def main():
     # Create our map
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
-    # Create the camera
-    camera = Camera(0, 0)
-
     # Create the game board
     game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, game_map, camera)
 
     # Create the HUD board
-    hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT)
+    hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, player)
 
     # Create the message board
     message_board = MessageBoard(libtcodpy.console.Console(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT), MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
@@ -74,20 +80,20 @@ def main():
     construction_worker = ConstructionWorker(game_map.tiles, entities)
 
     # Create the renderer last
-    renderer = Renderer(player, camera, game_board, message_board, hud_board, status_board)
+    renderer = Renderer(cursor, camera, game_board, message_board, hud_board, status_board)
 
     while True:
         # Log FPS
         print("FPS: " + str(libtcodpy.sys_get_fps()))
 
-        # Get the player's active tile for reference
-        active_tile = game_map.tiles[player.x][player.y]
+        # Get the cursor's active tile for reference
+        active_tile = game_map.tiles[cursor.x][cursor.y]
 
         # Get current time
         current_time = time.process_time() * 1000 # Convert to ms
         # Check if things should blink
         if(current_time - last_blink_time >= BLINK_DELAY):
-            player.blink = not player.blink
+            cursor.blink = not cursor.blink
             last_blink_time = current_time
 
         # Update entity count and rendered object count
@@ -121,15 +127,15 @@ def main():
 
                 # Check input handler response and act accordingly
                 if(end): raise SystemExit()
-                if(move_player): player.move(move_player[0], move_player[1])
+                if(move_player): cursor.move(move_player[0], move_player[1])
                 if(move_camera): camera.move(move_camera[0], move_camera[1])
                 if(place): 
                     # TODO: The 0 in the below line is the UID of the building, this info will
                     #  be relayed from an interface handler
                     if(construction_worker.construct_building(hud_board.active_building, active_tile)):
-                        message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], player.x, player.y))
+                        message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], cursor.x, cursor.y))
                     else:
-                        message_board.push_important_message("A building is already located at [%d, %d]" % (player.x, player.y))
+                        message_board.push_important_message("A building is already located at [%d, %d]" % (cursor.x, cursor.y))
                 if(change_building):
                     if(change_building == "down"):
                         hud_board.move_active_building(1)

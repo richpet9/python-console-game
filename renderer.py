@@ -45,8 +45,6 @@ class Renderer:
 
         # Render the text to the message board console
         self.message_board.render_console()
-        # Blit the message board console to the root
-        self.message_board.console.blit(root_console, 0, SCREEN_HEIGHT - MESSAGE_BOARD_HEIGHT, 0, 0, MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
 
         # Render the HUD
         self.hud_board.render_console()
@@ -54,12 +52,11 @@ class Renderer:
         # Render the status board
         self.status_board.render_console()
 
+        self.message_board.console.blit(root_console, 0, SCREEN_HEIGHT - MESSAGE_BOARD_HEIGHT, 0, 0, MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
         self.hud_board.console.blit(root_console, 0, 0, 0, 0, HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT)
         self.status_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, SCREEN_HEIGHT - STATUS_BOARD_HEIGHT, 0, 0, STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT)
         self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
         
-        # Blit the console
-        root_console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
     def entity_is_visible(self, entity):
