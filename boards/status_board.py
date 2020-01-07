@@ -20,13 +20,16 @@ class StatusBoard(Board):
 
             self.console.print(1, 1, "[%d, %d]" % (self.active_tile.x, self.active_tile.y))
 
-            if(building):
-                self.console.print(1, 2, building)
-            else:
-                self.console.print(1, 2, terrain, (libtcodpy.dark_green if terrain == "grass" else libtcodpy.desaturated_green))
-
             if(territory):
-                self.console.print(1, 4, territory, fg=self.active_tile.territory_color)
+                self.console.print(1, 2, territory, fg=self.active_tile.territory_color)
             else:
-                self.console.print(1, 4, "unclaimed land", fg=libtcodpy.yellow)
+                self.console.print(1, 2, "unclaimed land", fg=libtcodpy.lighter_gray)
+
+            self.console.print(1, 3, terrain, (libtcodpy.dark_green if terrain == "grass" else libtcodpy.desaturated_green))
+
+            if(building):
+                self.console.print(1, 4, building)
+                
+
+            
 
