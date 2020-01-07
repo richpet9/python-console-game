@@ -10,11 +10,12 @@ from player import Player
 from map.game_map import GameMap
 from entities.entity import Entity
 from entities.building import Building
-from workers.construction_worker import ConstructionWorker
 from boards.game_board import GameBoard
 from boards.message_board import MessageBoard
 from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
+from workers.construction_worker import ConstructionWorker
+from workers.turn_action__worker import TurnActionWorker
 from constants import (FONT_BITMAP_FILE,
 SCREEN_WIDTH,
 SCREEN_HEIGHT,
@@ -33,6 +34,7 @@ BLINK_DELAY)
 def main():
     last_blink_time = -1 # ms since last blink
     player_color = libtcodpy.dark_blue
+    current_turn = 0
 
     # Set the target FPS to: 15
     libtcodpy.sys_set_fps(15)
@@ -82,6 +84,9 @@ def main():
     # Create the construction worker
     construction_worker = ConstructionWorker(game_map.tiles, entities)
 
+    # Create the turn action worker
+    turn_action_worker = TurnActionWorker(game_map.tiles, entities, player)
+
     # Create the renderer last
     renderer = Renderer(cursor, camera, game_board, message_board, hud_board, status_board)
 
@@ -99,9 +104,11 @@ def main():
             cursor.blink = not cursor.blink
             last_blink_time = current_time
 
-        # Update entity count and rendered object count
+        # Update HUD info 
+        # TODO: Make engine a class and pass it to hud to remove these
         hud_board.entity_count = len(entities)
         hud_board.rendered_objects = renderer.rendered_objects
+        hud_board.current_turn = current_turn
 
         # Send active tile to the status board for stats
         status_board.active_tile = active_tile
@@ -122,14 +129,19 @@ def main():
                 raise SystemExit()
             if(event.type == "KEYDOWN"):
                 # A key was pressed, forward info to input hanlder
-                end = handle_keys(event.sym).get("quit")
+                end_game = handle_keys(event.sym).get("exit")
+                end_turn = handle_keys(event.sym).get("end_turn")
                 move_player = handle_keys(event.sym).get("move_player")
                 move_camera = handle_keys(event.sym).get("move_camera")
                 place = handle_keys(event.sym).get("place")
                 change_building = handle_keys(event.sym).get("change_building")
 
                 # Check input handler response and act accordingly
-                if(end): raise SystemExit()
+                if(end_game): raise SystemExit()
+                if(end_turn):
+                    # Increment turn and run turn worker
+                    current_turn += 1
+                    turn_action_worker.do_actions_for_all()
                 if(move_player): cursor.move(move_player[0], move_player[1])
                 if(move_camera): camera.move(move_camera[0], move_camera[1])
                 if(place): 
@@ -144,6 +156,7 @@ def main():
                         hud_board.move_active_building(1)
                     else:
                         hud_board.move_active_building(-1)
+
 
 
 if __name__ == '__main__':

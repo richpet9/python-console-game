@@ -10,6 +10,7 @@ class HUDBoard(Board):
 
         self.entity_count = -1
         self.rendered_objects = -1
+        self.current_turn = -1
         self.buildings = read_in_buildings()
         self.active_building_index = 0
         self.active_building = self.buildings[0] if self.buildings[0] else None
@@ -20,8 +21,9 @@ class HUDBoard(Board):
         self.console.clear(ord(' '))
 
         # Draw the messages
-        self.console.print(37, 1, "Entities: " + str(self.entity_count))
-        self.console.print(37, 2, "Rendered Objects: " + str(self.rendered_objects))
+        self.console.print(37, 1, "Turn: " + str(self.current_turn), fg=libtcodpy.light_amber)
+        self.console.print(37, 2, "Entities: " + str(self.entity_count))
+        self.console.print(37, 3, "Rendered Objects: " + str(self.rendered_objects))
         
         # Pre-create the cursor string since its a biggin
         cursor = with_col_code(2, 'x')
@@ -31,7 +33,7 @@ class HUDBoard(Board):
             building_string = building["name"] + ' ' \
                             + with_col_code(3, str(building["cost"])) + ' ' \
                             + with_col_code(5, str(building["energy_requirement"]))
-            cursor_string = '[' + (cursor if(index == self.active_building_index) else ' ') + ']'
+            cursor_string = '[' + (cursor if(index == self.active_building_index) else ' ') + '] '
             self.console.print(10, index + 1, cursor_string + building_string)
 
         # Print out player information

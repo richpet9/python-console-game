@@ -16,6 +16,10 @@ class ConstructionWorker():
 
         new_building = Building(tile.x, tile.y, ord(building["char"]), bg=libtcodpy.dark_blue)
 
+        if(building["turn_actions"] is not None):
+            for action in building["turn_actions"]:
+                new_building.add_turn_action(action, building["turn_actions"][action])
+
         tile.building = building["name"]
         tile.claimed_by(0)
         self.game_entities.append(new_building)
