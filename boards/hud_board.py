@@ -2,7 +2,7 @@ import tcod as libtcodpy
 
 from boards.board import Board
 from workers.construction_worker import read_in_buildings
-from util import clamp
+from util import clamp, with_col_code
 
 class HUDBoard(Board):
     def __init__(self, console, console_width, console_height, player):
@@ -24,7 +24,7 @@ class HUDBoard(Board):
         self.console.print(17, 2, "Rendered Objects: " + str(self.rendered_objects))
         
         # Pre-create the cursor string since its a biggin
-        cursor = chr(libtcodpy.COLCTRL_2) + 'x' + chr(libtcodpy.COLCTRL_STOP)
+        cursor = with_col_code(2, 'x')
 
         # Print out buildings
         for index, building in enumerate(self.buildings):
