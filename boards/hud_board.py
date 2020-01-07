@@ -20,21 +20,25 @@ class HUDBoard(Board):
         self.console.clear(ord(' '))
 
         # Draw the messages
-        self.console.print(17, 1, "Entities: " + str(self.entity_count))
-        self.console.print(17, 2, "Rendered Objects: " + str(self.rendered_objects))
+        self.console.print(37, 1, "Entities: " + str(self.entity_count))
+        self.console.print(37, 2, "Rendered Objects: " + str(self.rendered_objects))
         
         # Pre-create the cursor string since its a biggin
         cursor = with_col_code(2, 'x')
 
         # Print out buildings
         for index, building in enumerate(self.buildings):
-            self.console.print(17, index + 3, '[' + (cursor if(index == self.active_building_index) else ' ') + ']' + building["name"])
+            building_string = building["name"] + ' ' \
+                            + with_col_code(3, str(building["cost"])) + ' ' \
+                            + with_col_code(5, str(building["energy_requirement"]))
+            cursor_string = '[' + (cursor if(index == self.active_building_index) else ' ') + ']'
+            self.console.print(10, index + 1, cursor_string + building_string)
 
         # Print out player information
-        self.console.print(1, 1, "Funds:%d"%self.player.funds)
-        self.console.print(1, 2, "Research:%d"%self.player.research)
-        self.console.print(1, 3, "Military:%d"%self.player.military)
-        self.console.print(1, 4, "Energy:%d"%self.player.energy)
+        self.console.print(1, 1, "F:%d"%self.player.funds, fg=libtcodpy.yellow)
+        self.console.print(1, 2, "R:%d"%self.player.research, fg=libtcodpy.cyan)
+        self.console.print(1, 3, "M:%d"%self.player.military, fg=libtcodpy.red)
+        self.console.print(1, 4, "E:%d"%self.player.energy, fg=libtcodpy.orange)
 
     def move_active_building(self, amount):
         self.active_building_index = clamp(self.active_building_index + amount, 0, len(self.buildings) - 1)

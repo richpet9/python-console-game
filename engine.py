@@ -43,6 +43,9 @@ def main():
     # Set some color controllers
     libtcodpy.console_set_color_control(libtcodpy.COLCTRL_1, libtcodpy.red, libtcodpy.black)
     libtcodpy.console_set_color_control(libtcodpy.COLCTRL_2, libtcodpy.cyan, libtcodpy.black)
+    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_3, libtcodpy.yellow, libtcodpy.black)
+    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_4, libtcodpy.red, libtcodpy.black)
+    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
 
     # Create the root console
     root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'civs baby', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
