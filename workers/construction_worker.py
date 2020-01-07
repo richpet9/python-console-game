@@ -31,6 +31,9 @@ class ConstructionWorker():
         tile.claimed_by(0)
         self.game_entities.append(new_building)
 
+        # Take funds
+        self.player.funds += -1 * (building["cost"])
+
         return True
 
 
