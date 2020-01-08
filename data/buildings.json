@@ -1,17 +1,36 @@
 [
     {
         "UID": 0,
-        "name": "Capitol Building",
-        "char": "X"
+        "name": "Town Hall",
+        "char": "X",
+        "cost": 0,
+        "energy_requirement": 0,
+        "placed_actions": null,
+        "turn_actions": {
+            "claim_land": 1,
+            "increment_funds": 1
+        }
     },
     {
         "UID": 1,
-        "name": "College",
-        "char": "C"
+        "name": "School",
+        "char": "S",
+        "cost": 200,
+        "energy_requirement": 15,
+        "placed_actions": null,
+        "turn_actions": {
+            "increment_research": 1
+        }
     },
     {
         "UID": 2,
         "name": "Workshop",
-        "char": "W"
+        "char": "W",
+        "cost": 200,
+        "energy_requirement": 15,
+        "placed_actions": {
+            "increment_military": 100
+        },
+        "turn_actions": null
     }
 ]

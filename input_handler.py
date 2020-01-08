@@ -2,7 +2,9 @@ import tcod as libtcodpy
 
 def handle_keys(key):
     if(key == libtcodpy.event.K_ESCAPE):
-        return {"quit" : True}
+        return {"exit" : True}
+    if(key == libtcodpy.event.K_RETURN):
+        return {"end_turn" : True}
     if(key == libtcodpy.event.K_w):
         return {"move_player" : (0, -1)}
     if(key == libtcodpy.event.K_s):
