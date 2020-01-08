@@ -32,17 +32,10 @@ class GameBoard(Board):
         screenX = x - self.camera.x
         screenY = y - self.camera.y
 
-        if(tile.territory_of is None):
-            # Basic Tree generation (so we can more easily see camera movement)
-            if(tile.terrain == "trees"):
-                self.console.print(screenX, screenY, 'T', [125, 160, 120], [25, 60, 20])
-            else:
-                # If the tile is not a building, or territory, or tree, render is as a green block (grass)
-                self.console.print(screenX, screenY, 'G', [125, 160, 120], [25, 60, 20])
+        # Basic Tree generation (so we can more easily see camera movement)
+        if(tile.terrain == "trees"):
+            self.console.print(screenX, screenY, 'T', [125, 160, 120], [25, 60, 20])
         else:
-            # Tile is territory, so show the background of the owner
-            if(tile.terrain == "trees"):
-                self.console.print(screenX, screenY, 'T', [125, 160, 120], bg=self.player.color)
-            else:
-                # If the tile is not a building, or territory, or tree, render is as a green block (grass)
-                self.console.print(screenX, screenY, 'G', [125, 160, 120], bg=self.player.color)
+            # If the tile is not a building, or territory, or tree, render is as a green block (grass)
+            self.console.print(screenX, screenY, 'G', [125, 160, 120], [25, 60, 20])
+       

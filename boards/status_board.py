@@ -18,20 +18,14 @@ class StatusBoard(Board):
         # Show active tile info
         if(self.active_tile):
             building = self.active_tile.building
-            territory_of = self.active_tile.territory_of
             terrain = self.active_tile.terrain
 
             self.console.print(1, 1, "[%d, %d]" % (self.active_tile.x, self.active_tile.y))
 
-            if(territory_of is not None):
-                self.console.print(1, 2, "Player", fg=self.player.color)
-            else:
-                self.console.print(1, 2, "unclaimed land", fg=libtcodpy.lighter_gray)
-
-            self.console.print(1, 3, terrain, (libtcodpy.dark_green if terrain == "grass" else libtcodpy.desaturated_green))
+            self.console.print(1, 2, terrain, (libtcodpy.dark_green if terrain == "grass" else libtcodpy.desaturated_green))
 
             if(building):
-                self.console.print(1, 4, building)
+                self.console.print(1, 3, building)
                 
 
             

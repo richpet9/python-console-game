@@ -23,18 +23,6 @@ class ConstructionWorker():
 
         # Create the building entitity
         new_building = Building(tile.x, tile.y, ord(building["char"]), bg=libtcodpy.dark_blue)
-        
-        # Claim the tile the building will go on and neighbors
-        self.player.claim_tile(tile)
-        self.player.claim_tile(self.tiles[tile.x][tile.y - 1])
-        self.player.claim_tile(self.tiles[tile.x + 1][tile.y - 1])
-        self.player.claim_tile(self.tiles[tile.x + 1][tile.y])
-        self.player.claim_tile(self.tiles[tile.x + 1][tile.y + 1])
-        self.player.claim_tile(self.tiles[tile.x][tile.y + 1])
-        self.player.claim_tile(self.tiles[tile.x - 1][tile.y + 1])
-        self.player.claim_tile(self.tiles[tile.x - 1][tile.y])
-        self.player.claim_tile(self.tiles[tile.x - 1][tile.y - 1])
-
 
         # Add turn actions to the building
         if(building["turn_actions"] is not None):
