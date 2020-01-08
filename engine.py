@@ -94,7 +94,7 @@ def main():
 
     while True:
         # Log FPS
-        # print("FPS: " + str(libtcodpy.sys_get_fps()))
+        print("FPS: " + str(libtcodpy.sys_get_fps()))
 
         # Get the cursor's active tile for reference
         active_tile = game_map.tiles[cursor.x][cursor.y]
