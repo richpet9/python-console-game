@@ -7,7 +7,7 @@ from renderer import Renderer
 from input_handler import handle_keys 
 from camera import Camera
 from player import Player
-from map.game_map import GameMap
+from world.game_map import GameMap
 from entities.entity import Entity
 from entities.building import Building
 from boards.game_board import GameBoard
@@ -16,20 +16,22 @@ from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
 from workers.construction_worker import ConstructionWorker
 from workers.turn_action__worker import TurnActionWorker
-from constants import (FONT_BITMAP_FILE,
-SCREEN_WIDTH,
-SCREEN_HEIGHT,
-MAP_WIDTH,
-MAP_HEIGHT,
-HUD_BOARD_WIDTH,
-HUD_BOARD_HEIGHT,
-MESSAGE_BOARD_WIDTH,
-MESSAGE_BOARD_HEIGHT,
-STATUS_BOARD_WIDTH,
-STATUS_BOARD_HEIGHT,
-GAME_BOARD_WIDTH,
-GAME_BOARD_HEIGHT,
-BLINK_DELAY)
+from constants import (
+    FONT_BITMAP_FILE,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    MAP_WIDTH,
+    MAP_HEIGHT,
+    HUD_BOARD_WIDTH,
+    HUD_BOARD_HEIGHT,
+    MESSAGE_BOARD_WIDTH,
+    MESSAGE_BOARD_HEIGHT,
+    STATUS_BOARD_WIDTH,
+    STATUS_BOARD_HEIGHT,
+    GAME_BOARD_WIDTH,
+    GAME_BOARD_HEIGHT,
+    BLINK_DELAY
+)
     
 def main():
     last_blink_time = -1 # ms since last blink
@@ -92,7 +94,7 @@ def main():
 
     while True:
         # Log FPS
-        print("FPS: " + str(libtcodpy.sys_get_fps()))
+        # print("FPS: " + str(libtcodpy.sys_get_fps()))
 
         # Get the cursor's active tile for reference
         active_tile = game_map.tiles[cursor.x][cursor.y]
@@ -151,6 +153,7 @@ def main():
                     else:
                         message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], cursor.x, cursor.y))
                 if(change_building):
+                    game_map.generate_forests()
                     if(change_building == "down"):
                         hud_board.move_active_building(1)
                     else:
