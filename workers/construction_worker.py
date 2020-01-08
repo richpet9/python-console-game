@@ -21,14 +21,30 @@ class ConstructionWorker():
                     with_col_code(3, str(self.player.funds)) + \
                     with_col_code(1, '.')
 
+        # Create the building entitity
         new_building = Building(tile.x, tile.y, ord(building["char"]), bg=libtcodpy.dark_blue)
+        
+        # Claim the tile the building will go on and neighbors
+        self.player.claim_tile(tile)
+        self.player.claim_tile(self.tiles[tile.x][tile.y - 1])
+        self.player.claim_tile(self.tiles[tile.x + 1][tile.y - 1])
+        self.player.claim_tile(self.tiles[tile.x + 1][tile.y])
+        self.player.claim_tile(self.tiles[tile.x + 1][tile.y + 1])
+        self.player.claim_tile(self.tiles[tile.x][tile.y + 1])
+        self.player.claim_tile(self.tiles[tile.x - 1][tile.y + 1])
+        self.player.claim_tile(self.tiles[tile.x - 1][tile.y])
+        self.player.claim_tile(self.tiles[tile.x - 1][tile.y - 1])
 
+
+        # Add turn actions to the building
         if(building["turn_actions"] is not None):
             for action in building["turn_actions"]:
                 new_building.add_turn_action(action, building["turn_actions"][action])
 
+        # Tell the tile what it has on it
         tile.building = building["name"]
-        tile.claimed_by(0)
+
+        # Add the building to game entities
         self.game_entities.append(new_building)
 
         # Take funds

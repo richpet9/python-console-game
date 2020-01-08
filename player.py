@@ -10,3 +10,13 @@ class Player:
         self.research = 0
         self.military = 0
         self.energy = 0
+
+        self.territory = []
+
+    def claim_tile(self, tile):
+        # Check if this tile is already our territory
+        if(tile.territory_of is self.civ_id): return
+
+        # Add the tile
+        self.territory.append(tile)
+        tile.territory_of = self.civ_id

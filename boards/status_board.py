@@ -3,10 +3,13 @@ import tcod as libtcodpy
 from boards.board import Board
 
 class StatusBoard(Board):
-    def __init__(self, console, console_width, console_height):
+    def __init__(self, console, console_width, console_height, player):
         Board.__init__(self, console, console_width, console_height)
 
+        # Self.player will eventually be playerS, and we can dictionary search with civ_id
+        self.player = player
         self.active_tile = None
+
 
     def render_console(self):
         # Clear the board
@@ -15,13 +18,13 @@ class StatusBoard(Board):
         # Show active tile info
         if(self.active_tile):
             building = self.active_tile.building
-            territory = self.active_tile.territory
+            territory_of = self.active_tile.territory_of
             terrain = self.active_tile.terrain
 
             self.console.print(1, 1, "[%d, %d]" % (self.active_tile.x, self.active_tile.y))
 
-            if(territory):
-                self.console.print(1, 2, territory, fg=self.active_tile.territory_color)
+            if(territory_of is not None):
+                self.console.print(1, 2, "Player", fg=self.player.color)
             else:
                 self.console.print(1, 2, "unclaimed land", fg=libtcodpy.lighter_gray)
 

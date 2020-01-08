@@ -28,3 +28,5 @@ class TurnActionWorker:
 
     def _action_increment_military(self, amt):
         self.player.military += amt
+
+    
