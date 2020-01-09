@@ -35,6 +35,8 @@ class GameBoard(Board):
         # Basic Tree generation (so we can more easily see camera movement)
         if(tile.terrain == "forest"):
             self.console.print(screenX, screenY, 'F', [125, 160, 120], [18, 40, 15])
+        elif(tile.terrain == "lake"):
+            self.console.print(screenX, screenY, 'L', libtcodpy.lightest_blue, libtcodpy.desaturated_blue)
         else:
             # If the tile is not a building, or territory, or tree, render is as a green block (grass)
             self.console.print(screenX, screenY, 'G', [125, 160, 120], [25, 60, 20])

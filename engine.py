@@ -153,7 +153,6 @@ def main():
                     else:
                         message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], cursor.x, cursor.y))
                 if(change_building):
-                    game_map.generate_forests()
                     if(change_building == "down"):
                         hud_board.move_active_building(1)
                     else:
