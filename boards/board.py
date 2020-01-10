@@ -6,6 +6,3 @@ class Board():
         self.console = console
         self.console_width = console_width
         self.console_height = console_height
-
-    def render_console(self):
-        self.console.clear(ord(' '))
