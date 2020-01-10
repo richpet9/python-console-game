@@ -65,12 +65,12 @@ class GameMap:
 
                     hypoteneuse = math.sqrt((abs(new_x - random_x)**2) + (abs(new_y - random_y)**2))
 
-                    if(random.random() < (i / NUM_OF_LAKES) * 0.6 and hypoteneuse < lake_size // 2):
+                    if(random.random() < (((lake_size // 2) - hypoteneuse) / (lake_size // 2)) and hypoteneuse < (lake_size // 2)):
                         self.tiles[new_x][new_y].terrain = "lake"
         
             lake_size += -1 * (2**i)
 
-        for _ in range(2):
+        for _ in range(4):
             for y in range(MAP_HEIGHT):
                 for x in range(MAP_WIDTH):
                     current_tile = self.tiles[x][y]
