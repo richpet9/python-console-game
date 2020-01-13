@@ -17,8 +17,8 @@ class GameMap:
         self.height = height
 
         self.tiles = [[]]
-        self.generate_tiles()
         self.progress = 0
+        self.generate_tiles()
 
     def generate_tiles(self):
         # Generate all the tiles
