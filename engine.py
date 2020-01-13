@@ -14,6 +14,7 @@ from boards.game_board import GameBoard
 from boards.message_board import MessageBoard
 from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
+from menu_main import MainMenu
 from workers.construction_worker import ConstructionWorker
 from workers.turn_action__worker import TurnActionWorker
 from constants import (
@@ -34,6 +35,8 @@ from constants import (
 )
     
 def main():
+    game_state = "MAIN_MENU"
+
     last_blink_time = -1 # ms since last blink
     player_color = libtcodpy.dark_blue
     current_turn = 0
@@ -83,6 +86,9 @@ def main():
     # Create status board
     status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, player)
 
+    # Create main menu
+    main_menu = MainMenu()
+
     # Create the construction worker
     construction_worker = ConstructionWorker(game_map.tiles, entities, player)
 
@@ -90,7 +96,7 @@ def main():
     turn_action_worker = TurnActionWorker(game_map.tiles, entities, player)
 
     # Create the renderer last
-    renderer = Renderer(cursor, camera, game_board, message_board, hud_board, status_board)
+    renderer = Renderer(game_state, cursor, camera, game_board, message_board, hud_board, status_board, main_menu)
 
     while True:
         # Log FPS
