@@ -12,15 +12,15 @@ GAME_BOARD_WIDTH,
 GAME_BOARD_HEIGHT)
 
 class Renderer:
-    def __init__(self, game_state, cursor, camera, game_board, message_board, hud_board, status_board, main_menu):
-        self.game_state = game_state
-        self.cursor = cursor
-        self.camera = camera
-        self.game_board = game_board
-        self.message_board = message_board
-        self.hud_board = hud_board
-        self.status_board = status_board
-        self.main_menu = main_menu
+    def __init__(self, engine):
+        self.game_state = engine.game_state
+        self.cursor = engine.cursor
+        self.camera = engine.camera
+        self.game_board = engine.game_board
+        self.message_board = engine.message_board
+        self.hud_board = engine.hud_board
+        self.status_board = engine.status_board
+        self.main_menu = engine.main_menu
 
         self.rendered_objects = -1
     

@@ -33,103 +33,112 @@ from constants import (
     GAME_BOARD_HEIGHT,
     BLINK_DELAY
 )
-    
-def main():
-    game_state = "MAIN_MENU"
 
-    last_blink_time = -1 # ms since last blink
-    player_color = libtcodpy.dark_blue
-    current_turn = 0
+class Engine:
+    def __init__(self):
+        # Set the target FPS to: 15
+        libtcodpy.sys_set_fps(15)
 
-    # Set the target FPS to: 15
-    libtcodpy.sys_set_fps(15)
+        # Set the font
+        libtcodpy.console_set_custom_font(FONT_BITMAP_FILE, libtcodpy.FONT_LAYOUT_TCOD | libtcodpy.FONT_TYPE_GRAYSCALE)
 
-    # Set the font
-    libtcodpy.console_set_custom_font(FONT_BITMAP_FILE, libtcodpy.FONT_LAYOUT_TCOD | libtcodpy.FONT_TYPE_GRAYSCALE)
+        # Set some color controllers
+        libtcodpy.console_set_color_control(libtcodpy.COLCTRL_1, libtcodpy.red, libtcodpy.black)
+        libtcodpy.console_set_color_control(libtcodpy.COLCTRL_2, libtcodpy.cyan, libtcodpy.black)
+        libtcodpy.console_set_color_control(libtcodpy.COLCTRL_3, libtcodpy.yellow, libtcodpy.black)
+        libtcodpy.console_set_color_control(libtcodpy.COLCTRL_4, libtcodpy.red, libtcodpy.black)
+        libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
 
-    # Set some color controllers
-    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_1, libtcodpy.red, libtcodpy.black)
-    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_2, libtcodpy.cyan, libtcodpy.black)
-    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_3, libtcodpy.yellow, libtcodpy.black)
-    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_4, libtcodpy.red, libtcodpy.black)
-    libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
+        # Create the root console
+        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'civs baby', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
 
-    # Create the root console
-    root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'civs baby', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
+        # Create our instance variables
+        self.game_state = "MAIN_MENU"
+        self.last_blink_time = -1  # ms since last blink
+        self.current_time = 0
+        self.current_turn = 0
+        self.active_tile = None
 
-    # Create the camera
-    camera = Camera(0, 0)
+    def start_game(self):
+        # Create the camera
+        self.camera = Camera(0, 0)
 
-    # -- The below occurs when we click play --
+        # Create the player's civilization
+        self.player = Player("Richie's civ", 0, libtcodpy.blue)
 
-    # Create the player's civilization
-    player = Player("Richie's civ", 0, libtcodpy.blue)
+        # Create the cursor
+        self.cursor = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
+        
+        # Create our entity container
+        self.entities = []
 
-    # Create the cursor
-    cursor = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
-    
-    # Create our entity container
-    entities = []
+        # Create our map
+        self.game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
-    # Create our map
-    game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
+        # Create the game board
+        self.game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
 
-    # Create the game board
-    game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, game_map, camera, player)
+        # Create the HUD board
+        self.hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
 
-    # Create the HUD board
-    hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, player)
+        # Create the message board
+        self.message_board = MessageBoard(libtcodpy.console.Console(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT), MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
 
-    # Create the message board
-    message_board = MessageBoard(libtcodpy.console.Console(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT), MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
+        # Create status board
+        self.status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
 
-    # Create status board
-    status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, player)
+        # Create main menu
+        self.main_menu = MainMenu()
 
-    # Create main menu
-    main_menu = MainMenu()
+        # Create the construction worker
+        self.construction_worker = ConstructionWorker(self.game_map.tiles, self.entities, self.player)
 
-    # Create the construction worker
-    construction_worker = ConstructionWorker(game_map.tiles, entities, player)
+        # Create the turn action worker
+        self.turn_action_worker = TurnActionWorker(self.game_map.tiles, self.entities, self.player)
 
-    # Create the turn action worker
-    turn_action_worker = TurnActionWorker(game_map.tiles, entities, player)
+        # Create the renderer last
+        self.renderer = Renderer(self)
 
-    # Create the renderer last
-    renderer = Renderer(game_state, cursor, camera, game_board, message_board, hud_board, status_board, main_menu)
+        while True:
+            # Log FPS
+            print("FPS: " + str(libtcodpy.sys_get_fps()))
 
-    while True:
-        # Log FPS
-        print("FPS: " + str(libtcodpy.sys_get_fps()))
+            # Run everything
+            self.run()
 
-        # Get the cursor's active tile for reference
-        active_tile = game_map.tiles[cursor.x][cursor.y]
+    def run(self):
+        # Get the self.cursor's active tile for reference
+        self.active_tile = self.game_map.tiles[self.cursor.x][self.cursor.y]
 
         # Get current time
-        current_time = time.process_time() * 1000 # Convert to ms
-        # Check if things should blink
-        if(current_time - last_blink_time >= BLINK_DELAY):
-            cursor.blink = not cursor.blink
-            last_blink_time = current_time
+        self.current_time = time.process_time() * 1000 # Convert to ms
+
+        # Check if cursor should blink
+        if(self.current_time - self.last_blink_time >= BLINK_DELAY):
+            self.cursor.blink = not self.cursor.blink
+            self.last_blink_time = self.current_time
 
         # Update HUD info 
-        # TODO: Make engine a class and pass it to hud to remove these
-        hud_board.entity_count = len(entities)
-        hud_board.rendered_objects = renderer.rendered_objects
-        hud_board.current_turn = current_turn
+        self.hud_board.entity_count = len(self.entities)
+        self.hud_board.rendered_objects = self.renderer.rendered_objects
+        self.hud_board.current_turn = self.current_turn
 
         # Send active tile to the status board for stats
-        status_board.active_tile = active_tile
+        self.status_board.active_tile = self.active_tile
 
         # Render all the entities, the map, and the boards (maybe consolidate these)
-        renderer.render_all(root_console, entities)
+        self.renderer.render_all(self.root_console, self.entities)
 
         # Update the console
         libtcodpy.console_flush()
 
         # Clear all the information (replace every tile with a space)
-        root_console.clear(ord(' '))
+        self.root_console.clear(ord(' '))
 
+        # Check if any events occured
+        self.query_events()
+
+    def query_events(self):
         # Check for events
         for event in libtcodpy.event.get():
             if(event.type == "QUIT"):
@@ -139,7 +148,7 @@ def main():
                 # A key was pressed, forward info to input hanlder
                 end_game = handle_keys(event.sym).get("exit")
                 end_turn = handle_keys(event.sym).get("end_turn")
-                move_player = handle_keys(event.sym).get("move_player")
+                move_player = handle_keys(event.sym).get("move_self.player")
                 move_camera = handle_keys(event.sym).get("move_camera")
                 place = handle_keys(event.sym).get("place")
                 change_building = handle_keys(event.sym).get("change_building")
@@ -149,22 +158,24 @@ def main():
                 if(end_turn):
                     # Increment turn and run turn worker
                     current_turn += 1
-                    turn_action_worker.do_actions_for_all()
-                if(move_player): cursor.move(move_player[0], move_player[1])
-                if(move_camera): camera.move(move_camera[0], move_camera[1])
+                    self.turn_action_worker.do_actions_for_all()
+                if(move_player): self.cursor.move(move_player[0], move_player[1])
+                if(move_camera): self.camera.move(move_camera[0], move_camera[1])
                 if(place): 
-                    worker_response = construction_worker.construct_building(hud_board.active_building, active_tile)
+                    worker_response = self.construction_worker.construct_building(self.hud_board.active_building, self.active_tile)
                     if(worker_response is not True):
-                        message_board.push_important_message(worker_response)
+                        self.message_board.push_important_message(worker_response)
                     else:
-                        message_board.push_message("Placing %s at (%d, %d)" % (hud_board.active_building["name"], cursor.x, cursor.y))
+                        self.message_board.push_message("Placing %s at (%d, %d)" % (self.hud_board.active_building["name"], self.cursor.x, self.cursor.y))
                 if(change_building):
                     if(change_building == "down"):
-                        hud_board.move_active_building(1)
+                        self.hud_board.move_active_building(1)
                     else:
-                        hud_board.move_active_building(-1)
+                        self.hud_board.move_active_building(-1)
+
 
 
 
 if __name__ == '__main__':
-     main()
+     game = Engine()
+     game.start_game()
