@@ -50,7 +50,7 @@ class Engine:
         libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
 
         # Create the root console
-        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'civs baby', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
+        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
 
         # Create our instance variables
         self.game_state = "MAIN_MENU"
@@ -127,7 +127,7 @@ class Engine:
         self.status_board.active_tile = self.active_tile
 
         # Render all the entities, the map, and the boards (maybe consolidate these)
-        self.renderer.render_all(self.root_console, self.entities)
+        self.renderer.render_all(self.root_console, self.game_state, self.entities)
 
         # Update the console
         libtcodpy.console_flush()
@@ -148,7 +148,7 @@ class Engine:
                 # A key was pressed, forward info to input hanlder
                 end_game = handle_keys(event.sym).get("exit")
                 end_turn = handle_keys(event.sym).get("end_turn")
-                move_player = handle_keys(event.sym).get("move_self.player")
+                move_player = handle_keys(event.sym).get("move_player")
                 move_camera = handle_keys(event.sym).get("move_camera")
                 place = handle_keys(event.sym).get("place")
                 change_building = handle_keys(event.sym).get("change_building")
@@ -157,7 +157,7 @@ class Engine:
                 if(end_game): raise SystemExit()
                 if(end_turn):
                     # Increment turn and run turn worker
-                    current_turn += 1
+                    self.current_turn += 1
                     self.turn_action_worker.do_actions_for_all()
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): self.camera.move(move_camera[0], move_camera[1])
@@ -173,9 +173,9 @@ class Engine:
                     else:
                         self.hud_board.move_active_building(-1)
 
-
-
+def main():
+    game = Engine()
+    game.start_game()
 
 if __name__ == '__main__':
-     game = Engine()
-     game.start_game()
+    main()

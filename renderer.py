@@ -13,7 +13,6 @@ GAME_BOARD_HEIGHT)
 
 class Renderer:
     def __init__(self, engine):
-        self.game_state = engine.game_state
         self.cursor = engine.cursor
         self.camera = engine.camera
         self.game_board = engine.game_board
@@ -24,12 +23,13 @@ class Renderer:
 
         self.rendered_objects = -1
     
-    def render_all(self, root_console, entities):
+    def render_all(self, root_console, game_state, entities):
         # Reset the debug counter
         self.rendered_objects = 0
+        print(game_state)
 
         # Check game state
-        if(self.game_state is "MAIN_MENU"):
+        if(game_state is "MAIN_MENU"):
             # Render the main menu
             self.main_menu.render()
 
