@@ -26,7 +26,6 @@ class Renderer:
     def render_all(self, root_console, game_state, entities):
         # Reset the debug counter
         self.rendered_objects = 0
-        print(game_state)
 
         # Check game state
         if(game_state is "MAIN_MENU"):

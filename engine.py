@@ -107,24 +107,25 @@ class Engine:
             self.run()
 
     def run(self):
-        # Get the self.cursor's active tile for reference
-        self.active_tile = self.game_map.tiles[self.cursor.x][self.cursor.y]
+        if(self.game_state is "PLAYING"):
+            # Get the self.cursor's active tile for reference
+            self.active_tile = self.game_map.tiles[self.cursor.x][self.cursor.y]
 
-        # Get current time
-        self.current_time = time.process_time() * 1000 # Convert to ms
+            # Get current time
+            self.current_time = time.process_time() * 1000 # Convert to ms
 
-        # Check if cursor should blink
-        if(self.current_time - self.last_blink_time >= BLINK_DELAY):
-            self.cursor.blink = not self.cursor.blink
-            self.last_blink_time = self.current_time
+            # Check if cursor should blink
+            if(self.current_time - self.last_blink_time >= BLINK_DELAY):
+                self.cursor.blink = not self.cursor.blink
+                self.last_blink_time = self.current_time
 
-        # Update HUD info 
-        self.hud_board.entity_count = len(self.entities)
-        self.hud_board.rendered_objects = self.renderer.rendered_objects
-        self.hud_board.current_turn = self.current_turn
+            # Update HUD info 
+            self.hud_board.entity_count = len(self.entities)
+            self.hud_board.rendered_objects = self.renderer.rendered_objects
+            self.hud_board.current_turn = self.current_turn
 
-        # Send active tile to the status board for stats
-        self.status_board.active_tile = self.active_tile
+            # Send active tile to the status board for stats
+            self.status_board.active_tile = self.active_tile
 
         # Render all the entities, the map, and the boards (maybe consolidate these)
         self.renderer.render_all(self.root_console, self.game_state, self.entities)
@@ -137,6 +138,10 @@ class Engine:
 
         # Check if any events occured
         self.query_events()
+
+    def start_new_game(self):
+        self.game_state = "PLAYING"
+        self.game_map.generate_tiles()
 
     def query_events(self):
         # Check for events
@@ -156,9 +161,12 @@ class Engine:
                 # Check input handler response and act accordingly
                 if(end_game): raise SystemExit()
                 if(end_turn):
-                    # Increment turn and run turn worker
-                    self.current_turn += 1
-                    self.turn_action_worker.do_actions_for_all()
+                    if(self.game_state is "MAIN_MENU"):
+                        self.start_new_game()
+                    else:
+                        # Increment turn and run turn worker
+                        self.current_turn += 1
+                        self.turn_action_worker.do_actions_for_all()
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): self.camera.move(move_camera[0], move_camera[1])
                 if(place): 

@@ -18,7 +18,6 @@ class GameMap:
 
         self.tiles = [[]]
         self.progress = 0
-        self.generate_tiles()
 
     def generate_tiles(self):
         # Generate all the tiles
