@@ -18,6 +18,7 @@ class GameMap:
 
         self.tiles = [[]]
         self.generate_tiles()
+        self.progress = 0
 
     def generate_tiles(self):
         # Generate all the tiles
@@ -26,10 +27,12 @@ class GameMap:
         self.generate_forests()
 
     def generate_forests(self):
+        # Create random forest tiles
         for y in range(MAP_HEIGHT):
             for x in range(MAP_WIDTH):
                 if(random.random() < 0.40 and self.tiles[x][y].terrain is not "lake"):
                     self.tiles[x][y].terrain = "forest"
+        self.progress += 1
 
         # Using cellular automata
         # 5 passes are done, B5678/S45678
@@ -49,10 +52,13 @@ class GameMap:
                             current_tile.terrain = "forest"
                         elif(total_forest_neighbors < 3):
                             current_tile.terrain = "grass"
+        self.progress += 1
     
     def generate_lakes(self):
+        # lake_size is a diameter
         lake_size = 2**NUM_OF_LAKES
 
+        # Create random lakes, which are a random gradient of lake tiles from the center to lake_size
         for i in range(NUM_OF_LAKES):
             # Make random point
             random_x = random.randint(0, (MAP_WIDTH - 1) - (lake_size // 2))
@@ -68,8 +74,11 @@ class GameMap:
                     if(random.random() < (((lake_size // 2) - hypoteneuse) / (lake_size // 2)) and hypoteneuse < (lake_size // 2)):
                         self.tiles[new_x][new_y].terrain = "lake"
         
-            lake_size += -1 * (2**i)
+            lake_size -= (2**i)
+        self.progress += 1
 
+        # Do cellular automata for the lake tiles (or cells, I guess)
+        # B5678 / S45678
         for _ in range(4):
             for y in range(MAP_HEIGHT):
                 for x in range(MAP_WIDTH):
