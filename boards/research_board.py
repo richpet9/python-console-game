@@ -11,7 +11,7 @@ class ResearchBoard(Board):
 
         self.available_research = research_worker.available_research
         self.completed_research = research_worker.completed_research
-        self.active_node = None
+        self.active_node = self.available_research[0]
         self.active_node_index = 0
     
     def render(self):
@@ -36,9 +36,6 @@ class ResearchBoard(Board):
                 self.console.print(1, offset + index + 3, chr(libtcodpy.CHAR_ARROW_E), fg=libtcodpy.light_blue)
 
             self.console.print(2, offset + index + 3, node.name)
-    
-    def windowed_opened(self):
-        self.active_node = self.available_research[self.active_node_index]
 
     def move_active_node(self, dir):
         new_index = clamp(self.active_node_index + dir, 0, len(self.available_research) - 1)
