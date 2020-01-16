@@ -2,9 +2,9 @@ import tcod as libtcodpy
 
 def handle_keys(key):
     if(key == libtcodpy.event.K_ESCAPE):
-        return {"exit" : True}
+        return {"escape" : True}
     if(key == libtcodpy.event.K_RETURN):
-        return {"end_turn" : True}
+        return {"return" : True}
     if(key == libtcodpy.event.K_w):
         return {"move_player" : (0, -1)}
     if(key == libtcodpy.event.K_s):
@@ -24,9 +24,11 @@ def handle_keys(key):
     if(key == libtcodpy.event.K_x):
         return {"place" : "colony"}
     if(key == libtcodpy.event.K_i):
-        return {"change_building" : "up"}
+        return {"change_active" : "up"}
     if(key == libtcodpy.event.K_k):
-        return {"change_building" : "down"}
+        return {"change_active" : "down"}
+    if(key == libtcodpy.event.K_r):
+        return {"research" : "toggle"}
 
     return {}
     

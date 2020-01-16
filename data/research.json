@@ -1,0 +1,30 @@
+[
+    {
+        "RID": 0,
+        "name": "Public Education",
+        "requirements": null,
+        "unlocks": ["workshop"],
+        "effects": {
+            "building_enhancements": {
+                "workshop": {
+                    "increment_research": 1
+                }
+            },
+            "civ_enhancements": null
+        }
+    },
+    {
+        "RID": 1,
+        "name": "Extra Money!",
+        "requirements": "",
+        "unlocks": null,
+        "effects": {
+            "building_enhancements": null,
+            "civ_enhancements": {
+                "increment_funds": 3,
+                "increment_research": 2,
+                "increment_military": 1
+            }
+        }
+    }
+]

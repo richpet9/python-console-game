@@ -19,6 +19,7 @@ class Renderer:
         self.message_board = engine.message_board
         self.hud_board = engine.hud_board
         self.status_board = engine.status_board
+        self.research_board = engine.research_board
         self.main_menu = engine.main_menu
 
         self.rendered_objects = -1
@@ -35,6 +36,15 @@ class Renderer:
             # Blit the main menu
             self.main_menu.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         else:
+            # Render the text to the message board console
+            self.message_board.render_console()
+
+            # Render the HUD
+            self.hud_board.render_console()
+
+            # Render the status board
+            self.status_board.render_console()
+
             # Always 
             # Render game board first (the background)
             self.rendered_objects = self.game_board.render_console()
@@ -53,22 +63,21 @@ class Renderer:
                 self.render_entity(self.game_board.console, self.cursor)
                 self.rendered_objects += 1
 
-            # Render the text to the message board console
-            self.message_board.render_console()
+            # Blit game board
+            self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
+           
+            if(game_state is "RESEARCH"):
+                # Render research board
+                self.research_board.render()
 
-            # Render the HUD
-            self.hud_board.render_console()
-
-            # Render the status board
-            self.status_board.render_console()
+                # Blit search board
+                # TODO: Change variables here
+                self.research_board.console.blit(root_console, ((2 * SCREEN_WIDTH) // 3) + 1, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
 
             # Blit the individual boards into the main console
             self.message_board.console.blit(root_console, 0, SCREEN_HEIGHT - MESSAGE_BOARD_HEIGHT, 0, 0, MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
             self.hud_board.console.blit(root_console, 0, 0, 0, 0, HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT)
             self.status_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, SCREEN_HEIGHT - STATUS_BOARD_HEIGHT, 0, 0, STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT)
-            self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
-            
-
 
     def entity_is_visible(self, entity):
         return (entity.x >= self.camera.x) and (entity.x <= self.camera.x + GAME_BOARD_WIDTH) and (entity.y >= self.camera.y) and (entity.y <= self.camera.y + GAME_BOARD_HEIGHT)

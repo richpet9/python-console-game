@@ -1,6 +1,7 @@
 [
     {
         "UID": 0,
+        "NID": "town_hall",
         "name": "Town Hall",
         "char": "X",
         "cost": 0,
@@ -12,6 +13,7 @@
     },
     {
         "UID": 1,
+        "NID": "school",
         "name": "School",
         "char": "S",
         "cost": 200,
@@ -23,6 +25,7 @@
     },
     {
         "UID": 2,
+        "NID": "workshop",
         "name": "Workshop",
         "char": "W",
         "cost": 200,

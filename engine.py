@@ -1,6 +1,7 @@
 import tcod as libtcodpy
 import tcod.event
 import time
+import OpenGL
 
 from os import system, name
 from renderer import Renderer
@@ -14,9 +15,11 @@ from boards.game_board import GameBoard
 from boards.message_board import MessageBoard
 from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
+from boards.research_board import ResearchBoard
 from menu_main import MainMenu
 from workers.construction_worker import ConstructionWorker
 from workers.turn_action__worker import TurnActionWorker
+from workers.research_worker import ResearchWorker
 from constants import (
     FONT_BITMAP_FILE,
     SCREEN_WIDTH,
@@ -50,7 +53,7 @@ class Engine:
         libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
 
         # Create the root console
-        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
+        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_OPENGL, order="F", vsync=False)
 
         # Create our instance variables
         self.game_state = "MAIN_MENU"
@@ -75,6 +78,18 @@ class Engine:
         # Create our map
         self.game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
+        # Create main menu
+        self.main_menu = MainMenu()
+
+        # Create the construction worker
+        self.construction_worker = ConstructionWorker(self.game_map.tiles, self.entities, self.player)
+
+        # Create the turn action worker
+        self.turn_action_worker = TurnActionWorker(self.game_map.tiles, self.entities, self.player)
+
+        # Create the research worker
+        self.research_worker = ResearchWorker(self.player)
+
         # Create the game board
         self.game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
 
@@ -87,14 +102,8 @@ class Engine:
         # Create status board
         self.status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
 
-        # Create main menu
-        self.main_menu = MainMenu()
-
-        # Create the construction worker
-        self.construction_worker = ConstructionWorker(self.game_map.tiles, self.entities, self.player)
-
-        # Create the turn action worker
-        self.turn_action_worker = TurnActionWorker(self.game_map.tiles, self.entities, self.player)
+        # Create research board
+        self.research_board = ResearchBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.research_worker)
 
         # Create the renderer last
         self.renderer = Renderer(self)
@@ -106,8 +115,11 @@ class Engine:
             # Run everything
             self.run()
 
+            # Render everything
+            self.render()
+
     def run(self):
-        if(self.game_state is "PLAYING"):
+        if(self.game_state is "PLAYING" or self.game_state is "RESEARCH"):
             # Get the self.cursor's active tile for reference
             self.active_tile = self.game_map.tiles[self.cursor.x][self.cursor.y]
 
@@ -127,17 +139,18 @@ class Engine:
             # Send active tile to the status board for stats
             self.status_board.active_tile = self.active_tile
 
+        # Check if any events occured
+        self.query_events()
+
+    def render(self):
         # Render all the entities, the map, and the boards (maybe consolidate these)
         self.renderer.render_all(self.root_console, self.game_state, self.entities)
-
+        
         # Update the console
         libtcodpy.console_flush()
 
         # Clear all the information (replace every tile with a space)
         self.root_console.clear(ord(' '))
-
-        # Check if any events occured
-        self.query_events()
 
     def start_new_game(self):
         self.game_state = "PLAYING"
@@ -149,37 +162,69 @@ class Engine:
             if(event.type == "QUIT"):
                 # Quit the application
                 raise SystemExit()
+
             if(event.type == "KEYDOWN"):
                 # A key was pressed, forward info to input hanlder
-                end_game = handle_keys(event.sym).get("exit")
-                end_turn = handle_keys(event.sym).get("end_turn")
+                escape = handle_keys(event.sym).get("escape")
+                k_return = handle_keys(event.sym).get("return")
                 move_player = handle_keys(event.sym).get("move_player")
                 move_camera = handle_keys(event.sym).get("move_camera")
                 place = handle_keys(event.sym).get("place")
-                change_building = handle_keys(event.sym).get("change_building")
+                change_active = handle_keys(event.sym).get("change_active")
+                research = handle_keys(event.sym).get("research")
 
                 # Check input handler response and act accordingly
-                if(end_game): raise SystemExit()
-                if(end_turn):
+                if(escape): 
+                    # End game if playing, leave research if there
+                    if(self.game_state is "PLAYING"): raise SystemExit()
+                    if(self.game_state is "RESEARCH"): self.game_state = "PLAYING"
+
+                if(k_return):
+                    # Start game if in main menu, increment turn if playing, do research if there
                     if(self.game_state is "MAIN_MENU"):
                         self.start_new_game()
-                    else:
+                    elif(self.game_state is "PLAYING"):
                         # Increment turn and run turn worker
                         self.current_turn += 1
                         self.turn_action_worker.do_actions_for_all()
+                    elif(self.game_state is "RESEARCH"):
+                        self.research_worker.research_node(self.research_board.active_node)
+
+                        # If available research isn't empty, "jiggle" the active board so it moves
+                        if(len(self.research_worker.available_research) is not 0):
+                            self.research_board.move_active_node(-1)
+
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): self.camera.move(move_camera[0], move_camera[1])
+
                 if(place): 
                     worker_response = self.construction_worker.construct_building(self.hud_board.active_building, self.active_tile)
                     if(worker_response is not True):
                         self.message_board.push_important_message(worker_response)
                     else:
                         self.message_board.push_message("Placing %s at (%d, %d)" % (self.hud_board.active_building["name"], self.cursor.x, self.cursor.y))
-                if(change_building):
-                    if(change_building == "down"):
-                        self.hud_board.move_active_building(1)
+                
+                if(change_active):
+                    # Change active building if playing, change active research if not
+                    if(self.game_state is "PLAYING"):
+                        if(change_active is "down"):
+                            self.hud_board.move_active_building(1)
+                        else:
+                            self.hud_board.move_active_building(-1)
+                    elif(self.game_state is "RESEARCH"):
+                        if(change_active is "down"):
+                            self.research_board.move_active_node(1)
+                        else:
+                            self.research_board.move_active_node(-1)
+                
+                if(research):
+                    # Open or close the research menu
+                    if(self.game_state is "RESEARCH"):
+                        # For future reference, this should return to PREVIOUS game state
+                        self.game_state = "PLAYING"
                     else:
-                        self.hud_board.move_active_building(-1)
+                        self.game_state = "RESEARCH"
+                        self.research_board.windowed_opened()
 
 def main():
     game = Engine()
