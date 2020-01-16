@@ -1,7 +1,6 @@
 import tcod as libtcodpy
 import tcod.event
 import time
-import OpenGL
 
 from os import system, name
 from renderer import Renderer
