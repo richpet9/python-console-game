@@ -3,8 +3,6 @@ import tcod as libtcodpy
 from boards.board import Board
 from util import clamp
 
-# TODO: when state changes to research, update the available research list
-
 class ResearchBoard(Board):
     def __init__(self, console, console_width, console_height, research_worker):
         Board.__init__(self, console, console_width, console_height)
@@ -37,6 +35,10 @@ class ResearchBoard(Board):
 
             self.console.print(2, offset + index + 3, node.name)
 
-    def move_active_node(self, dir):
-        new_index = clamp(self.active_node_index + dir, 0, len(self.available_research) - 1)
-        self.active_node = self.available_research[new_index]   
+    def move_active_node(self, amount):
+        self.active_node_index = clamp(self.active_node_index + amount, 0, len(self.available_research) - 1)
+        self.active_node = self.available_research[self.active_node_index] 
+
+    def set_active_node(self, index):
+        self.active_node_index = index
+        self.active_node = self.available_research[self.active_node_index]

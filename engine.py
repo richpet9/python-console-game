@@ -109,7 +109,7 @@ class Engine:
 
         while True:
             # Log FPS
-            print("FPS: " + str(libtcodpy.sys_get_fps()))
+            # print("FPS: " + str(libtcodpy.sys_get_fps()))
 
             # Run everything
             self.run()
@@ -191,7 +191,7 @@ class Engine:
 
                         # If available research isn't empty, "jiggle" the active board so it moves
                         if(len(self.research_worker.available_research) is not 0):
-                            self.research_board.move_active_node(-1)
+                            self.research_board.set_active_node(0)
 
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): self.camera.move(move_camera[0], move_camera[1])

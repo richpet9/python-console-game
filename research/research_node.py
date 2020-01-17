@@ -1,5 +1,6 @@
 class ResearchNode:
-    def __init__(self, name=None):
+    def __init__(self, rid, name=None):
+        self.rid = rid
         self.name = name
         self.children = []
         self.parents = []

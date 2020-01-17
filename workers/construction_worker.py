@@ -40,9 +40,6 @@ class ConstructionWorker():
 
         return True
 
-
-
-
 def read_in_buildings():
     with open("data/buildings.json") as file:
         data = json.load(file)
