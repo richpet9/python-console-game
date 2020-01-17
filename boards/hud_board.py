@@ -45,3 +45,4 @@ class HUDBoard(Board):
     def move_active_building(self, amount):
         self.active_building_index = clamp(self.active_building_index + amount, 0, len(self.buildings) - 1)
         self.active_building = self.buildings[self.active_building_index]
+    

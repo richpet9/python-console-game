@@ -1,0 +1,70 @@
+[
+    {
+        "RID": 1,
+        "name": "Public Education",
+        "requirements": null,
+        "unlocks": ["workshop"],
+        "effects": {
+            "building_enhancements": {
+                "school": {
+                    "increment_research": 1
+                }
+            },
+            "civ_enhancements": null
+        }
+    },
+    {
+        "RID": 2,
+        "name": "Extra Money!",
+        "requirements": null,
+        "unlocks": null,
+        "effects": {
+            "building_enhancements": null,
+            "civ_enhancements": {
+                "increment_funds": 3,
+                "increment_research": 2,
+                "increment_military": 1
+            }
+        }
+    },
+    {
+        "RID": 3,
+        "name": "Extra GUNS!",
+        "requirements": [2],
+        "unlocks": null,
+        "effects": {
+            "building_enhancements": null,
+            "civ_enhancements": {
+                "increment_military": 4
+            }
+        }
+    },
+    {
+        "RID": 40,
+        "name": "Extra boof!",
+        "requirements": [2],
+        "unlocks": null,
+        "effects": null
+    },
+    {
+        "RID": 41,
+        "name": "Super gundad!",
+        "requirements": [2],
+        "unlocks": null,
+        "effects": null
+    },
+    {
+        "RID": 42,
+        "name": "Extra fresh stuff yo!",
+        "requirements": [41],
+        "unlocks": null,
+        "effects": null
+    },
+    {
+        "RID": 100,
+        "name": "Extra super cool cool cool!",
+        "requirements": [3, 40, 41, 42],
+        "unlocks": null,
+        "effects": null
+    }
+]
