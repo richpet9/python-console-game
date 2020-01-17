@@ -4,8 +4,8 @@ from boards.board import Board
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class LoadingBoard(Board):
-    def __init__(self, console, console_width, console_height):
-        Board.__init__(self, console, console_width, console_height)
+    def __init__(self, console_width, console_height):
+        Board.__init__(self, console_width, console_height)
 
         self.message = "Loading..."
         self.status_message = ' '

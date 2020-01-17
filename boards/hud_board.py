@@ -5,8 +5,8 @@ from workers.construction_worker import read_in_buildings
 from util import clamp, with_col_code
 
 class HUDBoard(Board):
-    def __init__(self, console, console_width, console_height, player):
-        Board.__init__(self, console, console_width, console_height)
+    def __init__(self, console_width, console_height, player):
+        Board.__init__(self, console_width, console_height)
 
         self.entity_count = -1
         self.rendered_objects = -1

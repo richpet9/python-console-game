@@ -11,7 +11,6 @@ _in no order_
 -   Rivers
 -   Chance of ice? sand?
 -   Center cursor to screen view
--   Modify board.py so it creates a console rather than being passed one (in every instantiation)
 -   Building num cap, but adjacent tiles make "larger" buildings (and also cost a little more?)
 -   Add constants for research screen
 -   Add functionality to "placed" bonuses for buildings

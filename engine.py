@@ -91,22 +91,22 @@ class Engine:
         self.research_worker = ResearchWorker(self.player)
 
         # Create the game board
-        self.game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
+        self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
 
         # Create the HUD board
-        self.hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
+        self.hud_board = HUDBoard(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
 
         # Create the message board
-        self.message_board = MessageBoard(libtcodpy.console.Console(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT), MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
+        self.message_board = MessageBoard(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
 
         # Create status board
-        self.status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
+        self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
 
         # Create research board
-        self.research_board = ResearchBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.player, self.research_worker)
+        self.research_board = ResearchBoard(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.player, self.research_worker)
 
         # Create the loading board
-        self.loading_board = LoadingBoard(libtcodpy.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT), SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.loading_board = LoadingBoard(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Create the renderer last
         self.renderer = Renderer(self)

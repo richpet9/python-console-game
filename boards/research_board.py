@@ -4,8 +4,8 @@ from boards.board import Board
 from util import clamp, with_col_code
 
 class ResearchBoard(Board):
-    def __init__(self, console, console_width, console_height, player, research_worker):
-        Board.__init__(self, console, console_width, console_height)
+    def __init__(self, console_width, console_height, player, research_worker):
+        Board.__init__(self, console_width, console_height)
         self.player = player
 
         self.available_research = research_worker.available_research

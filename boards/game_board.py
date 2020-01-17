@@ -4,8 +4,8 @@ from boards.board import Board
 from constants import GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT
 
 class GameBoard(Board):
-    def __init__(self, console, console_width, console_height, game_map, camera, player):
-        Board.__init__(self, console, console_width, console_height)
+    def __init__(self, console_width, console_height, game_map, camera, player):
+        Board.__init__(self, console_width, console_height)
 
         self.game_map = game_map
         self.camera = camera

@@ -3,8 +3,8 @@ import tcod as libtcodpy
 from boards.board import Board
 
 class StatusBoard(Board):
-    def __init__(self, console, console_width, console_height, player):
-        Board.__init__(self, console, console_width, console_height)
+    def __init__(self, console_width, console_height, player):
+        Board.__init__(self, console_width, console_height)
 
         # Self.player will eventually be playerS, and we can dictionary search with civ_id
         self.player = player
