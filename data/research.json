@@ -2,6 +2,7 @@
     {
         "RID": 1,
         "name": "Public Education",
+        "cost": 16,
         "requirements": null,
         "unlocks": ["workshop"],
         "effects": {
@@ -16,6 +17,7 @@
     {
         "RID": 2,
         "name": "Extra Money!",
+        "cost": 16,
         "requirements": null,
         "unlocks": null,
         "effects": {
@@ -30,6 +32,7 @@
     {
         "RID": 3,
         "name": "Extra GUNS!",
+        "cost": 128,
         "requirements": [2],
         "unlocks": null,
         "effects": {
@@ -42,6 +45,7 @@
     {
         "RID": 40,
         "name": "Extra boof!",
+        "cost": 128,
         "requirements": [2],
         "unlocks": null,
         "effects": null
@@ -49,6 +53,7 @@
     {
         "RID": 41,
         "name": "Super gundad!",
+        "cost": 256,
         "requirements": [2],
         "unlocks": null,
         "effects": null
@@ -56,6 +61,7 @@
     {
         "RID": 42,
         "name": "Extra fresh stuff yo!",
+        "cost": 512,
         "requirements": [41],
         "unlocks": null,
         "effects": null
@@ -63,6 +69,7 @@
     {
         "RID": 100,
         "name": "Extra super cool cool cool!",
+        "cost": 1012,
         "requirements": [3, 40, 41, 42],
         "unlocks": null,
         "effects": null

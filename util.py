@@ -17,6 +17,7 @@ def clamp(val: int, min_val: int, max_val: int):
     else: return max(val, min_val)
 
 def with_col_code(col_code, string):
+    string = str(string)
     if(col_code == 1):
         return chr(COLCTRL_1) + string + chr(COLCTRL_STOP)
     if(col_code == 2):

@@ -7,10 +7,7 @@
 
 _in no order_
 
--   Menu system with main and pause menus
 -   Save game functionality
--   Window system for research screen
--   Graph of research items
 -   Loading screen for terrain generation
 -   Rivers
 -   Chance of ice?
@@ -18,3 +15,5 @@ _in no order_
 -   Modify board.py so it creates a console rather than being passed one (in every instantiation)
 -   Building num cap, but adjacent tiles make "larger" buildings (and also cost a little more?)
 -   Add constants for research screen
+-   Add functionality to "placed" bonuses for buildings
+-   Add "unlocks" functionality to research to unlock buildings

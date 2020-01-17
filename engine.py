@@ -102,7 +102,7 @@ class Engine:
         self.status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
 
         # Create research board
-        self.research_board = ResearchBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.research_worker)
+        self.research_board = ResearchBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.player, self.research_worker)
 
         # Create the renderer last
         self.renderer = Renderer(self)
@@ -187,11 +187,18 @@ class Engine:
                         self.current_turn += 1
                         self.turn_action_worker.do_actions_for_all()
                     elif(self.game_state is "RESEARCH"):
-                        self.research_worker.research_node(self.research_board.active_node)
-
-                        # If available research isn't empty, "jiggle" the active board so it moves
-                        if(len(self.research_worker.available_research) is not 0):
-                            self.research_board.set_active_node(0)
+                        node_to_research = self.research_board.active_node
+                        worker_response = self.research_worker.research_node(node_to_research)
+                        if(worker_response is True):
+                            # Notify user research was successful
+                            self.message_board.push_message("You researched " + node_to_research.name)
+                            
+                            # If available research isn't empty, "jiggle" the active board so it moves
+                            if(len(self.research_worker.available_research) is not 0):
+                                self.research_board.set_active_node(0)
+                        else:
+                            # Send error notification
+                            self.message_board.push_important_message(worker_response)
 
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): self.camera.move(move_camera[0], move_camera[1])
