@@ -15,6 +15,7 @@ from boards.message_board import MessageBoard
 from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
 from boards.research_board import ResearchBoard
+from boards.loading_board import LoadingBoard
 from menu_main import MainMenu
 from workers.construction_worker import ConstructionWorker
 from workers.turn_action__worker import TurnActionWorker
@@ -104,6 +105,9 @@ class Engine:
         # Create research board
         self.research_board = ResearchBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.player, self.research_worker)
 
+        # Create the loading board
+        self.loading_board = LoadingBoard(libtcodpy.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT), SCREEN_WIDTH, SCREEN_HEIGHT)
+
         # Create the renderer last
         self.renderer = Renderer(self)
 
@@ -148,12 +152,32 @@ class Engine:
         # Update the console
         libtcodpy.console_flush()
 
-        # Clear all the information (replace every tile with a space)
-        self.root_console.clear(ord(' '))
-
     def start_new_game(self):
+        # Set game state to loading
+        self.game_state = "LOADING"
+
+        # Update the loading board info
+        self.loading_board.message = "Loading world"
+        self.loading_board.status_message = "Creating lakes..."
+        
+        # Render the changes
+        self.render()
+
+        # Generate lakes, update progress and board
+        self.game_map.generate_lakes()
+
+        # Change message and bar
+        self.loading_board.status_message = "Generating forests..."
+        self.loading_board.progress = 0.5
+
+        # Render changes
+        self.render()
+
+        # Generate forests
+        self.game_map.generate_forests()
+
+        # Start the game
         self.game_state = "PLAYING"
-        self.game_map.generate_tiles()
 
     def query_events(self):
         # Check for events

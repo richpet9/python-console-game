@@ -20,6 +20,7 @@ class Renderer:
         self.hud_board = engine.hud_board
         self.status_board = engine.status_board
         self.research_board = engine.research_board
+        self.loading_board = engine.loading_board
         self.main_menu = engine.main_menu
 
         self.rendered_objects = -1
@@ -35,6 +36,12 @@ class Renderer:
 
             # Blit the main menu
             self.main_menu.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        elif(game_state is "LOADING"):
+            # Render the loading board
+            self.loading_board.render_console()
+
+            # Blit the loading board
+            self.loading_board.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         else:
             # Render the text to the message board console
             self.message_board.render_console()

@@ -8,7 +8,6 @@
 _in no order_
 
 -   Save game functionality
--   Loading screen for terrain generation
 -   Rivers
 -   Chance of ice?
 -   Center cursor to screen view

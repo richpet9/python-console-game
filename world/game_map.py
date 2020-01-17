@@ -16,14 +16,12 @@ class GameMap:
         self.width = width
         self.height = height
 
-        self.tiles = [[]]
+        self.tiles = self.generate_tiles()
         self.progress = 0
 
     def generate_tiles(self):
         # Generate all the tiles
-        self.tiles = [[Tile(x, y, terrain="grass") for y in range(self.height)] for x in range(self.width)]
-        self.generate_lakes()
-        self.generate_forests()
+        return [[Tile(x, y, terrain="grass") for y in range(self.height)] for x in range(self.width)]
 
     def generate_forests(self):
         # Create random forest tiles
