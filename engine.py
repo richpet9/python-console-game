@@ -53,7 +53,7 @@ class Engine:
         libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
 
         # Create the root console
-        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
+        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_GLSL, order="F", vsync=False)
 
         # Create our instance variables
         self.game_state = "MAIN_MENU"
