@@ -21,24 +21,25 @@ class ResearchBoard(Board):
         self.console.print(1, 1, "RESEARCH")
 
         # The offset for completed research
-        offset = 1
+        offset = 4
 
         # Display all the completed research
         for index, node in enumerate(self.completed_research):
-            self.console.print(2, index + 3, node.name, fg=libtcodpy.gold)
+            self.console.print(1, index + 3, node.name, fg=libtcodpy.gold)
             offset += 1
 
         # Display all the available research
         for index, node in enumerate(self.available_research):
             # Check if the current node is the active node
+            fg_color = libtcodpy.white
             if(node is self.active_node): 
-                self.console.print(1, offset + index + 3, chr(libtcodpy.CHAR_HLINE), fg=libtcodpy.gold)
+                fg_color = libtcodpy.cyan
 
             cost_color = 2
             if(self.player.research < node.cost): cost_color = 1
 
             str_research = with_col_code(cost_color, node.cost) + ' ' + node.name
-            self.console.print(2, offset + index + 3, str_research)
+            self.console.print(1, offset + index, str_research, fg=fg_color)
 
     def move_active_node(self, amount):
         self.active_node_index = clamp(self.active_node_index + amount, 0, len(self.available_research) - 1)

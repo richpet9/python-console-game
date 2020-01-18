@@ -103,7 +103,7 @@ class Engine:
         self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
 
         # Create research board
-        self.research_board = ResearchBoard(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.player, self.research_worker)
+        self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
 
         # Create the loading board
         self.loading_board = LoadingBoard(SCREEN_WIDTH, SCREEN_HEIGHT)

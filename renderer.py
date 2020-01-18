@@ -79,7 +79,7 @@ class Renderer:
 
                 # Blit search board
                 # TODO: Change variables here
-                self.research_board.console.blit(root_console, ((2 * SCREEN_WIDTH) // 3) + 1, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
+                self.research_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, HUD_BOARD_HEIGHT, 0, 0, HUD_BOARD_WIDTH + 1, GAME_BOARD_HEIGHT, bg_alpha=0.8)
 
             # Blit the individual boards into the main console
             self.message_board.console.blit(root_console, 0, SCREEN_HEIGHT - MESSAGE_BOARD_HEIGHT, 0, 0, MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
