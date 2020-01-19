@@ -12,16 +12,16 @@ GAME_BOARD_WIDTH,
 GAME_BOARD_HEIGHT)
 
 class Renderer:
-    def __init__(self, engine):
-        self.cursor = engine.cursor
-        self.camera = engine.camera
-        self.game_board = engine.game_board
-        self.message_board = engine.message_board
-        self.hud_board = engine.hud_board
-        self.status_board = engine.status_board
-        self.research_board = engine.research_board
-        self.loading_board = engine.loading_board
-        self.main_menu = engine.main_menu
+    def __init__(self, main_menu):
+        self.cursor = None
+        self.camera = None
+        self.game_board = None
+        self.message_board = None
+        self.hud_board = None
+        self.status_board = None
+        self.research_board = None
+        self.loading_board = None
+        self.main_menu = main_menu
 
         self.rendered_objects = -1
     
@@ -94,5 +94,15 @@ class Renderer:
 
     def clear_entity(self, console, entity):
         console.print(entity.x - self.camera.x, entity.y - self.camera.y, ' ')
+    
+    def update(self, engine):
+        self.cursor = engine.cursor
+        self.camera = engine.camera
+        self.game_board = engine.game_board
+        self.message_board = engine.message_board
+        self.hud_board = engine.hud_board
+        self.status_board = engine.status_board
+        self.research_board = engine.research_board
+        self.loading_board = engine.loading_board
 
 

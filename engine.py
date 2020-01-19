@@ -1,5 +1,7 @@
+import numpy as np
 import tcod as libtcodpy
 import tcod.event
+import pickle
 import time
 
 from os import system, name
@@ -62,55 +64,19 @@ class Engine:
         self.current_turn = 0
         self.active_tile = None
 
-    def start_game(self):
-        # Create the camera
-        self.camera = Camera(0, 0)
+        # Create main menu
+        self.main_menu = MainMenu()
 
-        # Create the player's civilization
-        self.player = Player("Richie's civ", 0, libtcodpy.blue)
-
-        # Create the cursor
-        self.cursor = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
+        # Create the loading board
+        self.loading_board = LoadingBoard(SCREEN_WIDTH, SCREEN_HEIGHT)
         
         # Create our entity container
         self.entities = []
 
-        # Create our map
-        self.game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
-
-        # Create main menu
-        self.main_menu = MainMenu()
-
-        # Create the construction worker
-        self.construction_worker = ConstructionWorker(self.game_map.tiles, self.entities, self.player)
-
-        # Create the turn action worker
-        self.turn_action_worker = TurnActionWorker(self.game_map.tiles, self.entities, self.player)
-
-        # Create the research worker
-        self.research_worker = ResearchWorker(self.player)
-
-        # Create the game board
-        self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
-
-        # Create the HUD board
-        self.hud_board = HUDBoard(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
-
-        # Create the message board
-        self.message_board = MessageBoard(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
-
-        # Create status board
-        self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
-
-        # Create research board
-        self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
-
-        # Create the loading board
-        self.loading_board = LoadingBoard(SCREEN_WIDTH, SCREEN_HEIGHT)
-
         # Create the renderer last
-        self.renderer = Renderer(self)
+        self.renderer = Renderer(self.main_menu)
 
+    def start_game(self):
         while True:
             # Log FPS
             # print("FPS: " + str(libtcodpy.sys_get_fps()))
@@ -156,6 +122,45 @@ class Engine:
         # Set game state to loading
         self.game_state = "LOADING"
 
+        # Create the camera
+        self.camera = Camera(0, 0)
+
+        # Create the player's civilization
+        self.player = Player("Richie's Civ", 0, libtcodpy.blue)
+
+        # Create the cursor
+        self.cursor = Entity(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, ord('@'), libtcodpy.white, [25, 65, 45])
+
+        # Create our map
+        self.game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
+
+        # Create the construction worker
+        self.construction_worker = ConstructionWorker(self.game_map.tiles, self.entities, self.player)
+
+        # Create the turn action worker
+        self.turn_action_worker = TurnActionWorker(self.game_map.tiles, self.entities, self.player)
+
+        # Create the research worker
+        self.research_worker = ResearchWorker(self.player)
+
+        # Create the game board
+        self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
+
+        # Create the HUD board
+        self.hud_board = HUDBoard(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
+
+        # Create the message board
+        self.message_board = MessageBoard(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
+
+        # Create status board
+        self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
+
+        # Create research board
+        self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
+
+        # Update renderer
+        self.renderer.update(self)
+
         # Update the loading board info
         self.loading_board.message = "Loading world"
         self.loading_board.status_message = "Creating lakes..."
@@ -179,6 +184,89 @@ class Engine:
         # Start the game
         self.game_state = "PLAYING"
 
+    def save_game(self):
+        data_to_pickle = [
+            self.camera,
+            self.player,
+            self.entities,
+            self.cursor,
+            self.game_map.tiles,
+            self.current_turn,
+            self.construction_worker,
+            self.turn_action_worker,
+            self.research_worker
+        ]
+        pickle.dump(data_to_pickle, open("save.pysave", "wb"))
+
+        # Notify player
+        self.message_board.push_message("Game saved!")
+
+        # Debug message
+        print("Game saved.")
+
+    def load_game(self):
+        # Set game state to loading
+        self.game_state = "LOADING"
+
+        # Update the loading board info
+        self.loading_board.message = "Loading save"
+        self.loading_board.status_message = "Loading tiles..."
+
+        data_loaded = pickle.load(open("save.pysave", "rb"))
+
+        # Create the camera
+        self.camera = data_loaded[0]
+
+        # Create the player's civilization
+        self.player = data_loaded[1]
+
+        # Create our entity container
+        self.entities.extend(data_loaded[2])
+
+        # Create the cursor
+        self.cursor = data_loaded[3]
+
+        # Create our map
+        self.game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
+        self.game_map.tiles = data_loaded[4]
+
+        # Set loaded turn
+        try: self.current_turn = data_loaded[5]
+        except: self.current_turn = 0
+
+        # Create the construction worker
+        try: self.construction_worker = data_loaded[6]
+        except: self.construction_worker = ConstructionWorker(self.game_map.tiles, self.entities, self.player)
+
+        # Create the turn action worker
+        try: self.turn_action_worker = data_loaded[7]
+        except: self.turn_action_worker = TurnActionWorker(self.game_map.tiles, self.entities, self.player)
+
+        # Create the research worker
+        try: self.research_worker = data_loaded[8]
+        except: self.research_worker = ResearchWorker(self.player)
+
+        # Create the game board
+        self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
+
+        # Create the HUD board
+        self.hud_board = HUDBoard(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
+
+        # Create the message board
+        self.message_board = MessageBoard(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
+
+        # Create status board
+        self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
+
+        # Create research board
+        self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
+
+        # Update renderer
+        self.renderer.update(self)
+
+        # Set game state
+        self.game_state = "PLAYING"
+
     def query_events(self):
         # Check for events
         for event in libtcodpy.event.get():
@@ -195,6 +283,7 @@ class Engine:
                 place = handle_keys(event.sym).get("place")
                 change_active = handle_keys(event.sym).get("change_active")
                 research = handle_keys(event.sym).get("research")
+                save_game = handle_keys(event.sym).get("save_game")
 
                 # Check input handler response and act accordingly
                 if(escape): 
@@ -205,7 +294,8 @@ class Engine:
                 if(k_return):
                     # Start game if in main menu, increment turn if playing, do research if there
                     if(self.game_state is "MAIN_MENU"):
-                        self.start_new_game()
+                        # self.start_new_game()
+                        self.load_game()
                     elif(self.game_state is "PLAYING"):
                         # Increment turn and run turn worker
                         self.current_turn += 1
@@ -254,6 +344,10 @@ class Engine:
                         self.game_state = "PLAYING"
                     else:
                         self.game_state = "RESEARCH"
+
+                if(save_game):
+                    # Save the game
+                    self.save_game()
 
 def main():
     game = Engine()

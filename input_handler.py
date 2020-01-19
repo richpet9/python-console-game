@@ -29,6 +29,8 @@ def handle_keys(key):
         return {"change_active" : "down"}
     if(key == libtcodpy.event.K_r):
         return {"research" : "toggle"}
+    if(key == libtcodpy.event.K_t):
+        return {"save_game" : True}
 
     return {}
     

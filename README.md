@@ -7,7 +7,6 @@
 
 _in no order_
 
--   Save game functionality
 -   Rivers
 -   Chance of ice? sand?
 -   Center cursor to screen view
@@ -18,3 +17,4 @@ _in no order_
 -   Creating building browser menu
 -   Show building stats in status board
 -   Show research and building stats on hover
+-   Message class
