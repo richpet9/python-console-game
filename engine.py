@@ -288,14 +288,14 @@ class Engine:
                 # Check input handler response and act accordingly
                 if(escape): 
                     # End game if playing, leave research if there
-                    if(self.game_state is "PLAYING"): raise SystemExit()
+                    if(self.game_state is "PLAYING" or self.game_state is "MAIN_MENU"): raise SystemExit()
                     if(self.game_state is "RESEARCH"): self.game_state = "PLAYING"
 
                 if(k_return):
                     # Start game if in main menu, increment turn if playing, do research if there
                     if(self.game_state is "MAIN_MENU"):
-                        # self.start_new_game()
-                        self.load_game()
+                        if(self.main_menu.active_option is 0): self.start_new_game()
+                        if(self.main_menu.active_option is 1): self.load_game()
                     elif(self.game_state is "PLAYING"):
                         # Increment turn and run turn worker
                         self.current_turn += 1
@@ -315,7 +315,13 @@ class Engine:
                             self.message_board.push_important_message(worker_response)
 
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
-                if(move_camera): self.camera.move(move_camera[0], move_camera[1])
+                if(move_camera): 
+                    if(self.game_state is "MAIN_MENU"):
+                        # TODO: Change this. All of this.
+                        if(move_camera[0] < 0): self.main_menu.change_option(1)
+                        if(move_camera[0] > 0): self.main_menu.change_option(-1)
+                        
+                    else: self.camera.move(move_camera[0], move_camera[1])
 
                 if(place): 
                     worker_response = self.construction_worker.construct_building(self.hud_board.active_building, self.active_tile)
