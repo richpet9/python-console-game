@@ -20,6 +20,7 @@ class Renderer:
         self.hud_board = engine.hud_board
         self.status_board = engine.status_board
         self.research_board = engine.research_board
+        self.loading_board = engine.loading_board
         self.main_menu = engine.main_menu
 
         self.rendered_objects = -1
@@ -35,6 +36,12 @@ class Renderer:
 
             # Blit the main menu
             self.main_menu.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        elif(game_state is "LOADING"):
+            # Render the loading board
+            self.loading_board.render_console()
+
+            # Blit the loading board
+            self.loading_board.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
         else:
             # Render the text to the message board console
             self.message_board.render_console()
@@ -72,7 +79,7 @@ class Renderer:
 
                 # Blit search board
                 # TODO: Change variables here
-                self.research_board.console.blit(root_console, ((2 * SCREEN_WIDTH) // 3) + 1, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
+                self.research_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, HUD_BOARD_HEIGHT, 0, 0, HUD_BOARD_WIDTH + 1, GAME_BOARD_HEIGHT, bg_alpha=0.8)
 
             # Blit the individual boards into the main console
             self.message_board.console.blit(root_console, 0, SCREEN_HEIGHT - MESSAGE_BOARD_HEIGHT, 0, 0, MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)

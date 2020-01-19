@@ -6,7 +6,7 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 class MainMenu:
     def __init__(self):
         # Create a board for this menu
-        self.board = Board(libtcodpy.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT), SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.board = Board(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.console = self.board.console
 
     def render(self):

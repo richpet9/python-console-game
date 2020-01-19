@@ -3,8 +3,8 @@ import tcod as libtcodpy
 from boards.board import Board
 
 class MessageBoard(Board):
-    def __init__(self, console, console_width, console_height, messages=[]):
-        Board.__init__(self, console, console_width, console_height)
+    def __init__(self, console_width, console_height, messages=[]):
+        Board.__init__(self, console_width, console_height)
 
         self.messages = messages
     

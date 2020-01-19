@@ -15,6 +15,7 @@ from boards.message_board import MessageBoard
 from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
 from boards.research_board import ResearchBoard
+from boards.loading_board import LoadingBoard
 from menu_main import MainMenu
 from workers.construction_worker import ConstructionWorker
 from workers.turn_action__worker import TurnActionWorker
@@ -52,7 +53,7 @@ class Engine:
         libtcodpy.console_set_color_control(libtcodpy.COLCTRL_5, libtcodpy.orange, libtcodpy.black)
 
         # Create the root console
-        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_SDL2, order="F", vsync=False)
+        self.root_console = libtcodpy.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Python TCOD Game', False, libtcodpy.RENDERER_GLSL, order="F", vsync=False)
 
         # Create our instance variables
         self.game_state = "MAIN_MENU"
@@ -90,19 +91,22 @@ class Engine:
         self.research_worker = ResearchWorker(self.player)
 
         # Create the game board
-        self.game_board = GameBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
+        self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
 
         # Create the HUD board
-        self.hud_board = HUDBoard(libtcodpy.console.Console(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT), HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
+        self.hud_board = HUDBoard(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
 
         # Create the message board
-        self.message_board = MessageBoard(libtcodpy.console.Console(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT), MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
+        self.message_board = MessageBoard(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
 
         # Create status board
-        self.status_board = StatusBoard(libtcodpy.console.Console(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT), STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
+        self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
 
         # Create research board
-        self.research_board = ResearchBoard(libtcodpy.console.Console(GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT), GAME_BOARD_WIDTH // 3, GAME_BOARD_HEIGHT, self.research_worker)
+        self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
+
+        # Create the loading board
+        self.loading_board = LoadingBoard(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Create the renderer last
         self.renderer = Renderer(self)
@@ -148,12 +152,32 @@ class Engine:
         # Update the console
         libtcodpy.console_flush()
 
-        # Clear all the information (replace every tile with a space)
-        self.root_console.clear(ord(' '))
-
     def start_new_game(self):
+        # Set game state to loading
+        self.game_state = "LOADING"
+
+        # Update the loading board info
+        self.loading_board.message = "Loading world"
+        self.loading_board.status_message = "Creating lakes..."
+        
+        # Render the changes
+        self.render()
+
+        # Generate lakes, update progress and board
+        self.game_map.generate_lakes()
+
+        # Change message and bar
+        self.loading_board.status_message = "Generating forests..."
+        self.loading_board.progress = 0.5
+
+        # Render changes
+        self.render()
+
+        # Generate forests
+        self.game_map.generate_forests()
+
+        # Start the game
         self.game_state = "PLAYING"
-        self.game_map.generate_tiles()
 
     def query_events(self):
         # Check for events
@@ -187,11 +211,18 @@ class Engine:
                         self.current_turn += 1
                         self.turn_action_worker.do_actions_for_all()
                     elif(self.game_state is "RESEARCH"):
-                        self.research_worker.research_node(self.research_board.active_node)
-
-                        # If available research isn't empty, "jiggle" the active board so it moves
-                        if(len(self.research_worker.available_research) is not 0):
-                            self.research_board.set_active_node(0)
+                        node_to_research = self.research_board.active_node
+                        worker_response = self.research_worker.research_node(node_to_research)
+                        if(worker_response is True):
+                            # Notify user research was successful
+                            self.message_board.push_message("You researched " + node_to_research.name)
+                            
+                            # If available research isn't empty, "jiggle" the active board so it moves
+                            if(len(self.research_worker.available_research) is not 0):
+                                self.research_board.set_active_node(0)
+                        else:
+                            # Send error notification
+                            self.message_board.push_important_message(worker_response)
 
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): self.camera.move(move_camera[0], move_camera[1])
