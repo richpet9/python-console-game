@@ -221,7 +221,7 @@ class Engine:
         self.player = data_loaded[1]
 
         # Create our entity container
-        self.entities.extend(data_loaded[2])
+        self.entities = data_loaded[2]
 
         # Create the cursor
         self.cursor = data_loaded[3]
