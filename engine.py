@@ -321,6 +321,8 @@ class Engine:
                         else:
                             # Send error notification
                             self.message_board.push_important_message(worker_response)
+                    elif(self.game_state is "BUILDINGS"):
+                        self.game_state = "PLAYING"
 
                 if(move_player): self.cursor.move(move_player[0], move_player[1])
                 if(move_camera): 
