@@ -14,7 +14,6 @@ _in no order_
 -   Add constants for research screen
 -   Add functionality to "placed" bonuses for buildings
 -   Add "unlocks" functionality to research to unlock buildings
--   Creating building browser menu
 -   Show building stats in status board
 -   Show research and building stats on hover
 -   Message class
