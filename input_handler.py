@@ -31,6 +31,8 @@ def handle_keys(key):
         return {"research" : "toggle"}
     if(key == libtcodpy.event.K_t):
         return {"save_game" : True}
+    if(key == libtcodpy.event.K_b):
+        return {"buildings" : True}
 
     return {}
     

@@ -18,6 +18,7 @@ from boards.hud_board import HUDBoard
 from boards.status_board import StatusBoard
 from boards.research_board import ResearchBoard
 from boards.loading_board import LoadingBoard
+from boards.building_board import BuildingBoard
 from menu_main import MainMenu
 from workers.construction_worker import ConstructionWorker
 from workers.turn_action__worker import TurnActionWorker
@@ -88,7 +89,7 @@ class Engine:
             self.render()
 
     def run(self):
-        if(self.game_state is "PLAYING" or self.game_state is "RESEARCH"):
+        if(self.game_state is "PLAYING" or self.game_state is "RESEARCH" or self.game_state is "BUILDINGS"):
             # Get the self.cursor's active tile for reference
             self.active_tile = self.game_map.tiles[self.cursor.x][self.cursor.y]
 
@@ -143,20 +144,7 @@ class Engine:
         # Create the research worker
         self.research_worker = ResearchWorker(self.player)
 
-        # Create the game board
-        self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
-
-        # Create the HUD board
-        self.hud_board = HUDBoard(HUD_BOARD_WIDTH, HUD_BOARD_HEIGHT, self.player)
-
-        # Create the message board
-        self.message_board = MessageBoard(MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
-
-        # Create status board
-        self.status_board = StatusBoard(STATUS_BOARD_WIDTH, STATUS_BOARD_HEIGHT, self.player)
-
-        # Create research board
-        self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
+        self.initialize_boards()
 
         # Update renderer
         self.renderer.update(self)
@@ -183,26 +171,6 @@ class Engine:
 
         # Start the game
         self.game_state = "PLAYING"
-
-    def save_game(self):
-        data_to_pickle = [
-            self.camera,
-            self.player,
-            self.entities,
-            self.cursor,
-            self.game_map.tiles,
-            self.current_turn,
-            self.construction_worker,
-            self.turn_action_worker,
-            self.research_worker
-        ]
-        pickle.dump(data_to_pickle, open("save.pysave", "wb"))
-
-        # Notify player
-        self.message_board.push_message("Game saved!")
-
-        # Debug message
-        print("Game saved.")
 
     def load_game(self):
         # Set game state to loading
@@ -246,6 +214,15 @@ class Engine:
         try: self.research_worker = data_loaded[8]
         except: self.research_worker = ResearchWorker(self.player)
 
+        self.initialize_boards()
+
+        # Update renderer
+        self.renderer.update(self)
+
+        # Set game state
+        self.game_state = "PLAYING"
+    
+    def initialize_boards(self):
         # Create the game board
         self.game_board = GameBoard(GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.game_map, self.camera, self.player)
 
@@ -261,11 +238,28 @@ class Engine:
         # Create research board
         self.research_board = ResearchBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.research_worker)
 
-        # Update renderer
-        self.renderer.update(self)
+        # Create building browsing board
+        self.building_board = BuildingBoard(STATUS_BOARD_WIDTH, GAME_BOARD_HEIGHT, self.player, self.construction_worker)
 
-        # Set game state
-        self.game_state = "PLAYING"
+    def save_game(self):
+        data_to_pickle = [
+            self.camera,
+            self.player,
+            self.entities,
+            self.cursor,
+            self.game_map.tiles,
+            self.current_turn,
+            self.construction_worker,
+            self.turn_action_worker,
+            self.research_worker
+        ]
+        pickle.dump(data_to_pickle, open("save.pysave", "wb"))
+
+        # Notify player
+        self.message_board.push_message("Game saved!")
+
+        # Debug message
+        print("Game saved.")
 
     def query_events(self):
         # Check for events
@@ -283,13 +277,14 @@ class Engine:
                 place = handle_keys(event.sym).get("place")
                 change_active = handle_keys(event.sym).get("change_active")
                 research = handle_keys(event.sym).get("research")
+                buildings = handle_keys(event.sym).get("buildings")
                 save_game = handle_keys(event.sym).get("save_game")
 
                 # Check input handler response and act accordingly
                 if(escape): 
                     # End game if playing, leave research if there
                     if(self.game_state is "PLAYING" or self.game_state is "MAIN_MENU"): raise SystemExit()
-                    if(self.game_state is "RESEARCH"): self.game_state = "PLAYING"
+                    elif(self.game_state is not "LOADING"): self.game_state = "PLAYING"
 
                 if(k_return):
                     # Start game if in main menu, increment turn if playing, do research if there
@@ -324,11 +319,11 @@ class Engine:
                     else: self.camera.move(move_camera[0], move_camera[1])
 
                 if(place): 
-                    worker_response = self.construction_worker.construct_building(self.hud_board.active_building, self.active_tile)
+                    worker_response = self.construction_worker.construct_building(self.building_board.active_building, self.active_tile)
                     if(worker_response is not True):
                         self.message_board.push_important_message(worker_response)
                     else:
-                        self.message_board.push_message("Placing %s at (%d, %d)" % (self.hud_board.active_building["name"], self.cursor.x, self.cursor.y))
+                        self.message_board.push_message("Placing %s at (%d, %d)" % (self.building_board.active_building["name"], self.cursor.x, self.cursor.y))
                 
                 if(change_active):
                     # Change active building if playing, change active research if not
@@ -342,6 +337,11 @@ class Engine:
                             self.research_board.move_active_node(1)
                         else:
                             self.research_board.move_active_node(-1)
+                    elif(self.game_state is "BUILDINGS"):
+                        if(change_active is "down"):
+                            self.building_board.move_active_building(1)
+                        else:
+                            self.building_board.move_active_building(-1)
                 
                 if(research):
                     # Open or close the research menu
@@ -350,6 +350,14 @@ class Engine:
                         self.game_state = "PLAYING"
                     else:
                         self.game_state = "RESEARCH"
+
+                if(buildings):
+                    # Open or close the biuldings menu
+                    if(self.game_state is "BUILDINGS"):
+                        # For future reference, this should return to PREVIOUS game state
+                        self.game_state = "PLAYING"
+                    else:
+                        self.game_state = "BUILDINGS"
 
                 if(save_game):
                     # Save the game

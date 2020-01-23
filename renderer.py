@@ -20,6 +20,7 @@ class Renderer:
         self.hud_board = None
         self.status_board = None
         self.research_board = None
+        self.building_board = None
         self.loading_board = None
         self.main_menu = main_menu
 
@@ -73,13 +74,22 @@ class Renderer:
             # Blit game board
             self.game_board.console.blit(root_console, 0, HUD_BOARD_HEIGHT, 0, 0, GAME_BOARD_WIDTH, GAME_BOARD_HEIGHT)
            
+            # Check if research menu is open
             if(game_state is "RESEARCH"):
                 # Render research board
-                self.research_board.render()
+                self.research_board.render_console()
 
                 # Blit search board
                 # TODO: Change variables here
                 self.research_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, HUD_BOARD_HEIGHT, 0, 0, HUD_BOARD_WIDTH + 1, GAME_BOARD_HEIGHT, bg_alpha=0.8)
+
+            # Check if buildings menu is open
+            if(game_state is "BUILDINGS"):
+                # Render building board
+                self.building_board.render_console()
+
+                # Blit the building board
+                self.building_board.console.blit(root_console, (SCREEN_WIDTH * 2) // 3, HUD_BOARD_HEIGHT, 0, 0, HUD_BOARD_WIDTH + 1, GAME_BOARD_HEIGHT, bg_alpha=0.8)
 
             # Blit the individual boards into the main console
             self.message_board.console.blit(root_console, 0, SCREEN_HEIGHT - MESSAGE_BOARD_HEIGHT, 0, 0, MESSAGE_BOARD_WIDTH, MESSAGE_BOARD_HEIGHT)
@@ -103,6 +113,7 @@ class Renderer:
         self.hud_board = engine.hud_board
         self.status_board = engine.status_board
         self.research_board = engine.research_board
+        self.building_board = engine.building_board
         self.loading_board = engine.loading_board
 
 
