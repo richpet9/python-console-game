@@ -37,7 +37,8 @@ from constants import (
     STATUS_BOARD_HEIGHT,
     GAME_BOARD_WIDTH,
     GAME_BOARD_HEIGHT,
-    BLINK_DELAY
+    BLINK_DELAY,
+    BUILDING_FOV_RADIUS
 )
 
 class Engine:
@@ -261,6 +262,18 @@ class Engine:
         # Debug message
         print("Game saved.")
 
+    def add_to_fov(self, center, radius):
+        # Go through every tile on screen
+        for y in range(center[1] - radius, center[1] + radius):
+            for x in range(center[0] - radius, center[0] + radius):
+                tile = self.game_map.tiles[x][y]
+
+                if(tile.visible is not True):
+                    dX = abs(x - center[0])
+                    dY = abs(y - center[1])
+                    dist = np.sqrt((dX ** 2) + (dY ** 2))
+                    tile.visible = True if dist < radius else False
+
     def query_events(self):
         # Check for events
         for event in libtcodpy.event.get():
@@ -321,18 +334,16 @@ class Engine:
                 if(place): 
                     worker_response = self.construction_worker.construct_building(self.building_board.active_building, self.active_tile)
                     if(worker_response is not True):
+                        # Failed to build the building
                         self.message_board.push_important_message(worker_response)
                     else:
+                        # Successfully built the building
                         self.message_board.push_message("Placing %s at (%d, %d)" % (self.building_board.active_building["name"], self.cursor.x, self.cursor.y))
-                
+                        self.add_to_fov([self.active_tile.x, self.active_tile.y], BUILDING_FOV_RADIUS)
+
                 if(change_active):
                     # Change active building if playing, change active research if not
-                    if(self.game_state is "PLAYING"):
-                        if(change_active is "down"):
-                            self.hud_board.move_active_building(1)
-                        else:
-                            self.hud_board.move_active_building(-1)
-                    elif(self.game_state is "RESEARCH"):
+                    if(self.game_state is "RESEARCH"):
                         if(change_active is "down"):
                             self.research_board.move_active_node(1)
                         else:

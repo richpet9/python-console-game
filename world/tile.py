@@ -7,6 +7,8 @@ class Tile:
         self.y = y
         self.building = building
         self.terrain = terrain
+        self.visible = False
+        self.explored = False
     
 
 

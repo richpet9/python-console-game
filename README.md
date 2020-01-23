@@ -17,3 +17,4 @@ _in no order_
 -   Show building stats in status board
 -   Show research and building stats on hover
 -   Message class
+-   Add a exploration entity that will reveal areas

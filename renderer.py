@@ -37,12 +37,14 @@ class Renderer:
 
             # Blit the main menu
             self.main_menu.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+            
         elif(game_state is "LOADING"):
             # Render the loading board
             self.loading_board.render_console()
 
             # Blit the loading board
             self.loading_board.console.blit(root_console, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+            
         else:
             # Render the text to the message board console
             self.message_board.render_console()
@@ -53,7 +55,6 @@ class Renderer:
             # Render the status board
             self.status_board.render_console()
 
-            # Always 
             # Render game board first (the background)
             self.rendered_objects = self.game_board.render_console()
 
@@ -104,7 +105,7 @@ class Renderer:
 
     def clear_entity(self, console, entity):
         console.print(entity.x - self.camera.x, entity.y - self.camera.y, ' ')
-    
+
     def update(self, engine):
         self.cursor = engine.cursor
         self.camera = engine.camera
@@ -115,5 +116,7 @@ class Renderer:
         self.research_board = engine.research_board
         self.building_board = engine.building_board
         self.loading_board = engine.loading_board
+
+    
 
 
