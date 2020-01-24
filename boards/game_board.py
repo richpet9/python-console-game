@@ -31,18 +31,16 @@ class GameBoard(Board):
         tile = self.game_map.tiles[x][y]
         screenX = x - self.camera.x
         screenY = y - self.camera.y
-
-        if(tile.visible is not True):
-            self.console.print(screenX, screenY, ' ', bg=libtcodpy.black)
-        else:
-            if(tile.terrain is "forest"):
+        
+        if(tile.visible is True):
+            if(tile.terrain == "forest"):
                 self.console.print(screenX, screenY, 'F', [125, 160, 120], [18, 40, 15])
-            elif(tile.terrain is "lake"):
+            elif(tile.terrain == "lake"):
                 self.console.print(screenX, screenY, 'L', libtcodpy.lightest_blue, libtcodpy.desaturated_blue)
             else:
                 # If the tile is not a building, or territory, or tree, render is as a green block (grass)
                 self.console.print(screenX, screenY, 'G', [125, 160, 120], [25, 60, 20])
 
-            # If this tile hasn't been render yet, mark it as officially explored
-            if(tile.explored is False): tile.explored = True
+        # If this tile hasn't been render yet, mark it as officially explored
+        if(tile.explored is False): tile.explored = True
         
